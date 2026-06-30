@@ -1,7 +1,7 @@
 <div align="center">
-  <img src="https://via.placeholder.com/1200x300/1e1e2e/6366f1?text=Nexus+Knowledge+Engine" alt="Hero Banner" width="100%" />
+  <img src="https://via.placeholder.com/1200x300/1e1e2e/6366f1?text=DocSense+AI" alt="Hero Banner" width="100%" />
 
-  <h1>🚀 Nexus: AI Personal Knowledge Engine</h1>
+  <h1>🚀 DocSense AI: Personal Knowledge Search Engine</h1>
   <p>A production-ready, full-stack AI platform to ingest, semantically search, and chat with your private documents using RAG.</p>
 
   <!-- Badges -->
@@ -17,7 +17,7 @@
 ---
 
 ## 📖 Project Description
-Nexus is not just another "chat with PDF" clone. It is a highly scalable, multi-modal **Personal Knowledge Search Engine** designed to act as a private AI assistant. Users can upload various knowledge sources (PDFs, URLs, YouTube videos, GitHub repositories), which are automatically processed, chunked, and embedded into a high-dimensional vector space using `pgvector`. 
+DocSense AI is not just another "chat with PDF" clone. It is a highly scalable, multi-modal **Personal Knowledge Search Engine** designed to act as a private AI assistant. Users can upload various knowledge sources (PDFs, URLs, YouTube videos, GitHub repositories), which are automatically processed, chunked, and embedded into a high-dimensional vector space using `pgvector`. 
 
 The system leverages **Retrieval-Augmented Generation (RAG)** to provide highly accurate, hallucination-free answers backed by precise citations to the original source documents.
 
@@ -90,7 +90,7 @@ Our backend architecture implements a robust microservice-style RAG pipeline:
 
 ## 📂 Folder Structure
 ```text
-nexus/
+docsense-ai/
 ├── frontend/             # Next.js Application
 │   ├── src/
 │   │   ├── app/          # App Router Pages
