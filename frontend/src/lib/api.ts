@@ -24,7 +24,7 @@ export function removeToken(): void {
 }
 
 /* ─── Generic fetch wrapper ─── */
-export async function apiFetch<T = unknown>(
+export async function apiFetch<T = any>(
   endpoint: string,
   options: RequestInit = {},
 ): Promise<T> {
