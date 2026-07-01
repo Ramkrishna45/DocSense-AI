@@ -28,14 +28,14 @@ export default function Spinner({
         <div
           className={cn(
             'absolute inset-0 rounded-full border-2 border-transparent',
-            'border-t-violet-500 border-r-indigo-500',
+            'border-t-cyan-500 border-r-emerald-500',
             'animate-spin',
           )}
         />
         <div
           className={cn(
             'absolute inset-1 rounded-full border-2 border-transparent',
-            'border-b-violet-400/50',
+            'border-b-cyan-400/50',
             'animate-spin',
           )}
           style={{ animationDirection: 'reverse', animationDuration: '0.8s' }}

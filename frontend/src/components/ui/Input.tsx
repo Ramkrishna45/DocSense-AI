@@ -34,7 +34,7 @@ export default function Input(props: InputProps) {
     'w-full bg-[var(--surface-2)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)]',
     'border border-[var(--glass-border)] rounded-xl',
     'transition-all duration-200',
-    'focus:outline-none focus:border-violet-500/50 focus:ring-2 focus:ring-violet-500/20',
+    'focus:outline-none focus:border-[var(--color-primary)]/50 focus:ring-2 focus:ring-[var(--color-primary)]/20',
     'hover:border-[var(--glass-border-hover)]',
     error && 'border-rose-500/50 focus:border-rose-500/50 focus:ring-rose-500/20',
     icon ? 'pl-10' : 'pl-4',

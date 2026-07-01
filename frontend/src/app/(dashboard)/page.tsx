@@ -55,7 +55,7 @@ export default function DashboardPage() {
     <div className="space-y-8 animate-fadeIn">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-violet-400 to-indigo-400 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">
             Welcome back, {user?.name?.split(' ')[0] || 'User'}
           </h1>
           <p className="text-slate-400 mt-1">Here's what's happening with your knowledge base.</p>
@@ -99,7 +99,7 @@ export default function DashboardPage() {
         <div className="lg:col-span-2 space-y-4">
           <div className="flex justify-between items-center border-b border-slate-800 pb-2">
             <h2 className="text-xl font-semibold text-slate-200">Recent Documents</h2>
-            <Link href="/documents" className="text-sm text-indigo-400 hover:text-indigo-300">
+            <Link href="/documents" className="text-sm text-emerald-400 hover:text-indigo-300">
               View all
             </Link>
           </div>
@@ -123,7 +123,7 @@ export default function DashboardPage() {
         <div className="space-y-4">
           <div className="flex justify-between items-center border-b border-slate-800 pb-2">
             <h2 className="text-xl font-semibold text-slate-200">Recent Chats</h2>
-            <Link href="/chat" className="text-sm text-indigo-400 hover:text-indigo-300">
+            <Link href="/chat" className="text-sm text-emerald-400 hover:text-indigo-300">
               New chat
             </Link>
           </div>
@@ -132,8 +132,8 @@ export default function DashboardPage() {
             <div className="space-y-3">
               {recentChats.map(chat => (
                 <Link key={chat.id} href={`/chat/${chat.id}`}>
-                  <div className="p-4 rounded-xl bg-slate-900/40 border border-slate-800 hover:border-indigo-500/50 hover:bg-slate-800/60 transition-all cursor-pointer group">
-                    <h3 className="font-medium text-slate-300 group-hover:text-indigo-400 transition-colors truncate">
+                  <div className="p-4 rounded-xl bg-slate-900/40 border border-slate-800 hover:border-emerald-500/50 hover:bg-slate-800/60 transition-all cursor-pointer group">
+                    <h3 className="font-medium text-slate-300 group-hover:text-emerald-400 transition-colors truncate">
                       {chat.title}
                     </h3>
                     <div className="flex justify-between items-center mt-2 text-xs text-slate-500">

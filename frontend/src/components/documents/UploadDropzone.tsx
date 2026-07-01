@@ -111,8 +111,8 @@ export default function UploadDropzone({
         className={cn(
           'relative flex flex-col items-center justify-center gap-4 p-10 rounded-2xl border-2 border-dashed cursor-pointer transition-all duration-300',
           isDragOver
-            ? 'border-violet-500 bg-violet-500/10 scale-[1.02]'
-            : 'border-[var(--glass-border)] bg-[var(--glass-bg)] hover:border-violet-500/30 hover:bg-[var(--glass-bg-hover)]',
+            ? 'border-cyan-500 bg-cyan-500/10 scale-[1.02]'
+            : 'border-[var(--glass-border)] bg-[var(--glass-bg)] hover:border-cyan-500/30 hover:bg-[var(--glass-bg-hover)]',
         )}
       >
         <input
@@ -130,14 +130,14 @@ export default function UploadDropzone({
           className={cn(
             'p-4 rounded-2xl transition-all duration-300',
             isDragOver
-              ? 'bg-violet-500/20 scale-110'
+              ? 'bg-cyan-500/20 scale-110'
               : 'bg-white/5',
           )}
         >
           <svg
             className={cn(
               'w-10 h-10 transition-colors duration-300',
-              isDragOver ? 'text-violet-400' : 'text-[var(--text-muted)]',
+              isDragOver ? 'text-cyan-400' : 'text-[var(--text-muted)]',
             )}
             fill="none"
             viewBox="0 0 24 24"
@@ -155,11 +155,11 @@ export default function UploadDropzone({
         <div className="text-center">
           <p className="text-sm font-medium text-[var(--text-primary)]">
             {isDragOver ? (
-              <span className="text-violet-400">Drop files here</span>
+              <span className="text-cyan-400">Drop files here</span>
             ) : (
               <>
                 Drag & drop files here, or{' '}
-                <span className="text-violet-400 hover:text-violet-300">
+                <span className="text-cyan-400 hover:text-cyan-300">
                   browse
                 </span>
               </>

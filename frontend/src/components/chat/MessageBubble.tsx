@@ -5,27 +5,41 @@ import SourceCitation from './SourceCitation';
 export default function MessageBubble({ message }: { message: Message }) {
   const isUser = message.role === 'user';
   
-  // Simple markdown-like formatting for bold and line breaks
-  const formatText = (text: string) => {
-    return text.split('\n').map((line, i) => (
-      <span key={i}>
-        {line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}
-        <br/>
-      </span>
-    ));
-  };
 
   return (
-    <div className={`flex w-full ${isUser ? 'justify-end' : 'justify-start'} animate-slideUp`}>
-      <div className={`max-w-[85%] md:max-w-[75%] rounded-2xl p-5 ${
+    <div
+      className={`flex gap-4 w-full ${isUser ? 'flex-row-reverse' : ''} animate-fadeInUp group`}
+    >
+      {/* Avatar */}
+      <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
         isUser 
-          ? 'bg-gradient-to-br from-violet-600 to-indigo-600 text-white shadow-lg shadow-indigo-900/20 rounded-tr-sm' 
-          : 'bg-slate-800/80 backdrop-blur-sm border border-slate-700 text-slate-200 rounded-tl-sm'
+          ? 'bg-gradient-to-tr from-[var(--color-primary)] to-[var(--color-secondary)] shadow-lg shadow-[var(--color-primary)]/20' 
+          : 'glass-strong border border-[var(--color-accent)]/30 text-[var(--color-accent)] shadow-[var(--shadow-glow)]'
       }`}>
+        {isUser ? (
+          <span className="text-sm font-bold text-white">U</span>
+        ) : (
+          <span className="text-sm font-bold">AI</span>
+        )}
+      </div>
+
+      {/* Message Content */}
+      <div
+        className={`flex-1 max-w-[85%] sm:max-w-[75%] ${
+          isUser ? 'items-end' : 'items-start'
+        } flex flex-col gap-2`}
+      >
+        <div
+          className={`relative p-4 md:p-5 text-[15px] leading-relaxed shadow-sm ${
+            isUser
+              ? 'bg-gradient-to-br from-[#10b981] to-[#059669] text-white rounded-[24px] rounded-tr-sm shadow-emerald-500/20'
+              : 'glass bg-[var(--surface-2)]/80 text-[var(--text-primary)] rounded-[24px] rounded-tl-sm border border-[var(--glass-border)] group-hover:border-[var(--color-accent)]/30 transition-colors duration-300'
+          }`}
+        >
         
         {!isUser && (
           <div className="flex justify-between items-center mb-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">AI Assistant</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">AI Assistant</span>
             {message.confidence !== null && (
               <span className={`text-[10px] px-2 py-0.5 rounded-full ${
                 message.confidence > 0.8 ? 'bg-emerald-500/20 text-emerald-400' :
@@ -51,8 +65,9 @@ export default function MessageBubble({ message }: { message: Message }) {
           </div>
         )}
         
-        <div className={`text-[10px] mt-2 ${isUser ? 'text-indigo-200 text-right' : 'text-slate-500 text-left'}`}>
+        <div className={`text-[10px] mt-2 ${isUser ? 'text-emerald-200 text-right' : 'text-[var(--text-muted)] text-left'}`}>
           {new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+        </div>
         </div>
       </div>
     </div>

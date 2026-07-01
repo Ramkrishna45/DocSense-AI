@@ -84,7 +84,7 @@ export default function UploadPage() {
             onClick={() => setSourceType(type.id as any)}
             className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${
               sourceType === type.id 
-                ? 'bg-indigo-600 text-white shadow-md' 
+                ? 'bg-emerald-600 text-white shadow-md' 
                 : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
             }`}
           >

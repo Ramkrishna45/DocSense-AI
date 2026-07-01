@@ -73,7 +73,7 @@ export default function Sidebar() {
         <Link
           href="/chat"
           id="new-chat-btn"
-          className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-sm font-medium hover:from-violet-500 hover:to-indigo-500 shadow-lg shadow-violet-600/20 transition-all duration-200 active:scale-[0.98]"
+          className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-emerald-600 text-white text-sm font-medium hover:from-cyan-500 hover:to-emerald-500 shadow-lg shadow-cyan-600/20 transition-all duration-200 active:scale-[0.98]"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -97,11 +97,11 @@ export default function Sidebar() {
               className={cn(
                 'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200',
                 isActive
-                  ? 'bg-gradient-to-r from-violet-600/20 to-indigo-600/20 text-[var(--text-primary)] border border-violet-500/20 shadow-sm'
+                  ? 'bg-gradient-to-r from-cyan-600/20 to-emerald-600/20 text-[var(--text-primary)] border border-cyan-500/20 shadow-sm'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/5',
               )}
             >
-              <span className={cn(isActive && 'text-violet-400')}>
+              <span className={cn(isActive && 'text-cyan-400')}>
                 {item.icon}
               </span>
               {item.label}
@@ -123,7 +123,7 @@ export default function Sidebar() {
                   className={cn(
                     'flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors',
                     pathname === `/chat/${conv.id}`
-                      ? 'text-violet-400 bg-violet-500/10'
+                      ? 'text-cyan-400 bg-cyan-500/10'
                       : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-white/5',
                   )}
                 >
@@ -145,7 +145,7 @@ export default function Sidebar() {
       <div className="p-4 border-t border-[var(--glass-border)]">
         <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
           <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          NeuralVault v1.0
+          DocSense AI v1.0
         </div>
       </div>
     </aside>

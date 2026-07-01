@@ -61,7 +61,7 @@ export default function Navbar() {
               </svg>
             </div>
             <span className="text-lg font-bold gradient-text hidden sm:block">
-              NeuralVault
+              DocSense AI
             </span>
           </Link>
         </div>
@@ -101,7 +101,7 @@ export default function Navbar() {
               onClick={() => setMenuOpen(!menuOpen)}
               className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-white/5 transition-colors"
             >
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white text-xs font-bold">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-emerald-600 flex items-center justify-center text-white text-xs font-bold">
                 {initials}
               </div>
               <span className="hidden sm:block text-sm text-[var(--text-secondary)] max-w-[120px] truncate">

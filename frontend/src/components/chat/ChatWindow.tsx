@@ -54,7 +54,7 @@ export default function ChatWindow({ messages, isLoading, onSendMessage, emptySt
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask a question about your documents..."
-            className="w-full bg-slate-900 border border-slate-700 focus:border-indigo-500 rounded-xl py-3 pl-4 pr-12 text-slate-200 resize-none h-14 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all custom-scrollbar"
+            className="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-xl py-3 pl-4 pr-12 text-slate-200 resize-none h-14 focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all custom-scrollbar"
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -65,7 +65,7 @@ export default function ChatWindow({ messages, isLoading, onSendMessage, emptySt
           <button 
             type="submit" 
             disabled={!input.trim() || isLoading}
-            className="absolute right-2 p-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-50 disabled:hover:bg-indigo-600 transition-colors"
+            className="absolute right-2 p-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-500 disabled:opacity-50 disabled:hover:bg-emerald-600 transition-colors"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
               <path d="M3.478 2.404a.75.75 0 00-.926.941l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.404z" />

@@ -13,7 +13,7 @@ export default function SourceCitation({ source, index }: { source: SourceInfo; 
         className="w-full flex items-center justify-between p-3 text-left hover:bg-slate-800/50 transition-colors"
       >
         <div className="flex items-center gap-2 truncate pr-4">
-          <span className="flex-shrink-0 w-5 h-5 rounded bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xs font-bold">
+          <span className="flex-shrink-0 w-5 h-5 rounded bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs font-bold">
             {index}
           </span>
           <span className="font-medium text-slate-300 truncate">{source.document_title}</span>
@@ -21,7 +21,7 @@ export default function SourceCitation({ source, index }: { source: SourceInfo; 
             <span className="text-slate-500 flex-shrink-0 text-[10px] uppercase">Pg {source.page_number}</span>
           )}
           {source.similarity_score !== undefined && (
-            <span className={`flex-shrink-0 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${source.match_type === 'keyword' ? 'bg-amber-500/20 text-amber-400' : 'bg-indigo-500/20 text-indigo-400'}`}>
+            <span className={`flex-shrink-0 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${source.match_type === 'keyword' ? 'bg-amber-500/20 text-amber-400' : 'bg-emerald-500/20 text-emerald-400'}`}>
               {source.match_type === 'keyword' ? 'Keyword' : `${Math.round(source.similarity_score * 100)}% Match`}
             </span>
           )}

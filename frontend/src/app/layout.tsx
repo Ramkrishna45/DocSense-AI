@@ -1,17 +1,17 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Outfit } from 'next/font/google';
 import './globals.css';
 import { ToastProvider } from '@/components/ui/Toast';
 import { AuthProvider } from '@/lib/auth';
 
-const inter = Inter({
+const outfit = Outfit({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-inter',
+  variable: '--font-outfit',
 });
 
 export const metadata: Metadata = {
-  title: 'NeuralVault — AI Knowledge Search Engine',
+  title: 'DocSense AI — Intelligent Knowledge Engine',
   description:
     'Upload your documents and unlock AI-powered search, chat, and insights. Your personal knowledge base with intelligent retrieval.',
   keywords: [
@@ -22,9 +22,9 @@ export const metadata: Metadata = {
     'AI chat',
     'semantic search',
   ],
-  authors: [{ name: 'NeuralVault' }],
+  authors: [{ name: 'DocSense AI' }],
   openGraph: {
-    title: 'NeuralVault — AI Knowledge Search Engine',
+    title: 'DocSense AI — Intelligent Knowledge Engine',
     description:
       'Upload your documents and unlock AI-powered search, chat, and insights.',
     type: 'website',
@@ -37,9 +37,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`dark ${inter.variable}`}>
+    <html lang="en" className={`dark ${outfit.variable}`}>
       <body
-        className={`${inter.className} bg-[hsl(230,25%,5%)] text-[hsl(220,20%,95%)] antialiased`}
+        className={`${outfit.className} bg-[hsl(220,30%,3%)] text-[hsl(220,20%,95%)] antialiased`}
       >
         <AuthProvider>
           <ToastProvider>{children}</ToastProvider>

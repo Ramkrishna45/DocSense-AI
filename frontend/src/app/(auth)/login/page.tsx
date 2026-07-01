@@ -35,7 +35,7 @@ export default function LoginPage() {
   return (
     <Card className="p-8 backdrop-blur-xl bg-slate-900/60 border-slate-800 animate-slideUp">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-violet-400 to-indigo-400 bg-clip-text text-transparent mb-2">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent mb-2">
           Welcome Back
         </h1>
         <p className="text-slate-400">Sign in to your knowledge base</p>
@@ -77,7 +77,7 @@ export default function LoginPage() {
 
       <div className="mt-8 text-center text-sm text-slate-400">
         Don't have an account?{' '}
-        <Link href="/register" className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors">
+        <Link href="/register" className="text-emerald-400 hover:text-indigo-300 font-medium transition-colors">
           Create an account
         </Link>
       </div>

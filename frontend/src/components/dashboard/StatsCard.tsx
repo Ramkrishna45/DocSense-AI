@@ -17,7 +17,7 @@ export default function StatsCard({
   label,
   value,
   change,
-  accentColor = 'from-violet-500 to-indigo-500',
+  accentColor = 'from-cyan-500 to-emerald-500',
 }: StatsCardProps) {
   return (
     <Card hover glow className="relative overflow-hidden group">

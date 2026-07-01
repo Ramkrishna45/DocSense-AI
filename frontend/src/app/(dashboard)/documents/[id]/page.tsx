@@ -41,7 +41,7 @@ export default function DocumentDetailPage() {
     <div className="max-w-6xl mx-auto space-y-8 animate-fadeIn">
       <div className="flex justify-between items-start">
         <div>
-          <button onClick={() => router.back()} className="text-sm text-indigo-400 hover:text-indigo-300 mb-2 flex items-center gap-1">
+          <button onClick={() => router.back()} className="text-sm text-emerald-400 hover:text-indigo-300 mb-2 flex items-center gap-1">
             ← Back to Documents
           </button>
           <h1 className="text-3xl font-bold text-slate-100 flex items-center gap-3">
@@ -63,7 +63,7 @@ export default function DocumentDetailPage() {
         <div className="space-y-6">
           <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800">
             <h2 className="text-lg font-semibold text-slate-200 mb-4 flex items-center gap-2">
-              <span className="text-indigo-400">✨</span> AI Summary
+              <span className="text-emerald-400">✨</span> AI Summary
             </h2>
             {doc.summary ? (
               <p className="text-slate-300 text-sm leading-relaxed">{doc.summary}</p>
@@ -77,7 +77,7 @@ export default function DocumentDetailPage() {
                 <ul className="space-y-2 text-sm text-slate-300">
                   {doc.key_topics.map((topic, i) => (
                     <li key={i} className="flex items-start gap-2">
-                      <span className="text-indigo-500 mt-0.5">•</span>
+                      <span className="text-emerald-500 mt-0.5">•</span>
                       <span>{topic}</span>
                     </li>
                   ))}
@@ -117,7 +117,7 @@ export default function DocumentDetailPage() {
               {doc.source_url && (
                 <div className="flex justify-between pt-2">
                   <span className="text-slate-500">URL</span>
-                  <a href={doc.source_url} target="_blank" rel="noreferrer" className="text-indigo-400 hover:underline truncate max-w-[200px]">
+                  <a href={doc.source_url} target="_blank" rel="noreferrer" className="text-emerald-400 hover:underline truncate max-w-[200px]">
                     {doc.source_url}
                   </a>
                 </div>
