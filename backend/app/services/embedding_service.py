@@ -46,14 +46,13 @@ class EmbeddingService:
         if self._model is not None:
             return
 
-        logger.info("Loading embedding model: %s", settings.EMBEDDING_MODEL)
+        logger.info("Loading embedding model using Google Gemini")
         try:
-            from langchain_huggingface import HuggingFaceEmbeddings
+            from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
-            self._model = HuggingFaceEmbeddings(
-                model_name=settings.EMBEDDING_MODEL,
-                model_kwargs={"device": "cpu"},
-                encode_kwargs={"normalize_embeddings": True},
+            self._model = GoogleGenerativeAIEmbeddings(
+                model="models/text-embedding-004",
+                google_api_key=settings.GOOGLE_API_KEY,
             )
             logger.info("Embedding model loaded successfully")
         except Exception as e:

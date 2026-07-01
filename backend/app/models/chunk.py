@@ -20,8 +20,7 @@ class Chunk(Base):
         content: Raw text content of the chunk.
         embedding: 384-dimensional vector from all-MiniLM-L6-v2.
     """
-
-    __tablename__ = "chunks"
+    __tablename__ = "document_chunks"
 
     id: Mapped[uuid.UUID] = mapped_column(
         primary_key=True,
@@ -35,7 +34,7 @@ class Chunk(Base):
     chunk_number: Mapped[int] = mapped_column(Integer, nullable=False)
     page_number: Mapped[int | None] = mapped_column(Integer, nullable=True)
     content: Mapped[str] = mapped_column(Text, nullable=False)
-    embedding = mapped_column(Vector(384), nullable=True)
+    embedding: Mapped[list[float]] = mapped_column(Vector(768), nullable=True)
 
     # Relationships
     document: Mapped["Document"] = relationship("Document", back_populates="chunks")
