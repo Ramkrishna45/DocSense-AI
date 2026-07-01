@@ -111,7 +111,8 @@ export async function getMe(): Promise<User> {
 
 /* ─── Documents ─── */
 export async function getDocuments(): Promise<Document[]> {
-  return apiFetch<Document[]>('/api/documents');
+  const res = await apiFetch<{ documents: Document[]; total: number }>('/api/documents');
+  return res.documents || [];
 }
 
 export async function uploadDocument(file: File): Promise<Document> {
@@ -173,8 +174,8 @@ export async function getConversations(): Promise<Conversation[]> {
 
 export async function getConversationMessages(
   conversationId: string,
-): Promise<{ conversation: Conversation; messages: Message[] }> {
-  return apiFetch(`/api/chat/conversations/${conversationId}`);
+): Promise<Message[]> {
+  return apiFetch<Message[]>(`/api/chat/conversations/${conversationId}`);
 }
 
 export async function deleteConversation(id: string): Promise<void> {
