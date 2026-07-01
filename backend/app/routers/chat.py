@@ -6,7 +6,7 @@ import uuid
 from app.database import get_db
 from app.core.dependencies import get_current_user
 from app.schemas.chat import ChatRequest, ChatResponse, ConversationResponse, MessageResponse
-from app.services.chat_service import ChatService
+from app.services import chat_service
 
 router = APIRouter(prefix="/api/chat", tags=["chat"])
 
@@ -17,7 +17,7 @@ async def process_chat_message(
     db: AsyncSession = Depends(get_db)
 ):
     try:
-        response = await ChatService.process_chat(
+        response = await chat_service.process_chat(
             db, 
             uuid.UUID(current_user["id"]), 
             chat_request.message, 
@@ -36,7 +36,7 @@ async def list_conversations(
     current_user: dict = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
-    conversations = await ChatService.get_conversations(db, uuid.UUID(current_user["id"]))
+    conversations = await chat_service.get_conversations(db, uuid.UUID(current_user["id"]))
     # Convert to response schema
     return [
         ConversationResponse(
@@ -54,7 +54,7 @@ async def get_conversation_messages(
     current_user: dict = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
-    messages = await ChatService.get_conversation_messages(db, conversation_id, uuid.UUID(current_user["id"]))
+    messages = await chat_service.get_conversation_messages(db, conversation_id, uuid.UUID(current_user["id"]))
     return messages
 
 @router.delete("/conversations/{conversation_id}")
@@ -63,7 +63,7 @@ async def delete_conversation(
     current_user: dict = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
-    success = await ChatService.delete_conversation(db, conversation_id, uuid.UUID(current_user["id"]))
+    success = await chat_service.delete_conversation(db, conversation_id, uuid.UUID(current_user["id"]))
     if not success:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Conversation not found")
     return {"message": "Conversation deleted successfully"}
