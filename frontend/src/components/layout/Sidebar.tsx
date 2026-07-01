@@ -10,7 +10,7 @@ import type { Conversation } from '@/types';
 
 const navItems = [
   {
-    href: '/dashboard',
+    href: '/',
     label: 'Dashboard',
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
@@ -87,7 +87,7 @@ export default function Sidebar() {
         {navItems.map((item) => {
           const isActive =
             pathname === item.href ||
-            (item.href !== '/dashboard' && pathname.startsWith(item.href));
+            (item.href !== '/' && pathname.startsWith(item.href));
 
           return (
             <Link
