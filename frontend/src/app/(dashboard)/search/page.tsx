@@ -79,7 +79,7 @@ export default function SearchPage() {
         <Button 
           type="submit" 
           variant="primary" 
-          isLoading={isSearching}
+          loading={isSearching}
           className="h-[52px] mt-6" 
         >
           Search

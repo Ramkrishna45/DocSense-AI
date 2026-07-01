@@ -109,7 +109,7 @@ export default function UploadPage() {
               </ul>
               
               <div className="flex justify-end pt-4">
-                <Button variant="primary" onClick={handleUpload} isLoading={isUploading}>
+                <Button variant="primary" onClick={handleUpload} loading={isUploading}>
                   Upload All Files
                 </Button>
               </div>
@@ -132,7 +132,7 @@ export default function UploadPage() {
             onChange={(e) => setSourceTitle(e.target.value)}
           />
           <div className="flex justify-end pt-2">
-            <Button variant="primary" onClick={handleUpload} isLoading={isUploading} disabled={!sourceUrl}>
+            <Button variant="primary" onClick={handleUpload} loading={isUploading} disabled={!sourceUrl}>
               Process URL
             </Button>
           </div>

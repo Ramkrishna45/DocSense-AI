@@ -94,7 +94,7 @@ export default function RegisterPage() {
             type="submit" 
             variant="primary" 
             fullWidth 
-            isLoading={isLoading}
+            loading={isLoading}
           >
             Create Account
           </Button>

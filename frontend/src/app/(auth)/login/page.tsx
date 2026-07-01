@@ -69,7 +69,7 @@ export default function LoginPage() {
           type="submit" 
           variant="primary" 
           fullWidth 
-          isLoading={isLoading}
+          loading={isLoading}
         >
           Sign In
         </Button>
