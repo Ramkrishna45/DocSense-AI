@@ -4,22 +4,25 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, FileText, Download, Trash2, Calendar, Database, Activity, CheckCircle2, Loader2 } from "lucide-react";
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { getDocument, deleteDocument, downloadDocument } from '@/lib/api';
 import type { Document } from '@/types';
 import { toast } from 'sonner';
 
-export default function DocumentDetailPage({ params }: { params: { id: string } }) {
+export default function DocumentDetailPage() {
   const router = useRouter();
+  const params = useParams();
+  const id = params.id as string;
   const [doc, setDoc] = useState<Document | null>(null);
   const [loading, setLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
 
   useEffect(() => {
+    if (!id) return;
     const fetchDoc = async () => {
       try {
-        const data = await getDocument(params.id);
+        const data = await getDocument(id);
         setDoc(data);
       } catch (error) {
         toast.error("Failed to load document details");
@@ -29,13 +32,13 @@ export default function DocumentDetailPage({ params }: { params: { id: string } 
       }
     };
     fetchDoc();
-  }, [params.id]);
+  }, [id]);
 
   const handleDelete = async () => {
     if (!confirm("Are you sure you want to delete this document?")) return;
     setIsDeleting(true);
     try {
-      await deleteDocument(params.id);
+      await deleteDocument(id);
       toast.success("Document deleted successfully");
       router.push('/documents');
     } catch (error) {
@@ -47,7 +50,7 @@ export default function DocumentDetailPage({ params }: { params: { id: string } 
   const handleDownload = async () => {
     setIsDownloading(true);
     try {
-      const blob = await downloadDocument(params.id);
+      const blob = await downloadDocument(id);
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
