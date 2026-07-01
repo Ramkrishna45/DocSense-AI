@@ -158,8 +158,8 @@ export async function getStats(): Promise<UserStats> {
 export async function sendChatMessage(
   message: string,
   conversationId?: string,
-): Promise<{ message: Message; conversation_id: string }> {
-  return apiFetch('/api/chat/message', {
+): Promise<{ message: string; sources: SourceInfo[]; conversation_id: string; confidence?: number }> {
+  return apiFetch('/api/chat', {
     method: 'POST',
     body: JSON.stringify({
       message,

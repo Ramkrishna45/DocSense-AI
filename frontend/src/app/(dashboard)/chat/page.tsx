@@ -57,7 +57,7 @@ export default function ChatPage() {
       const response = await sendChatMessage(userMessage);
       setMessages(prev => [...prev, { 
         id: Date.now() + 1, 
-        text: response.message.content, 
+        text: response.message, 
         isBot: true 
       }]);
     } catch (error: any) {
