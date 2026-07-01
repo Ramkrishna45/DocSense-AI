@@ -21,7 +21,7 @@ async def upload_document(
     db: AsyncSession = Depends(get_db)
 ):
     try:
-        user_id = uuid.UUID(current_user["id"])
+        user_id = current_user.id
         
         # Upload or register source
         doc = await document_service.upload_document(
@@ -58,7 +58,7 @@ async def list_documents(
     current_user: dict = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
-    docs = await document_service.get_user_documents(db, uuid.UUID(current_user["id"]))
+    docs = await document_service.get_user_documents(db, current_user.id)
     return DocumentListResponse(documents=docs, total=len(docs))
 
 @router.get("/stats")
@@ -66,7 +66,7 @@ async def get_document_stats(
     current_user: dict = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
-    stats = await document_service.get_user_stats(db, uuid.UUID(current_user["id"]))
+    stats = await document_service.get_user_stats(db, current_user.id)
     return stats
 
 @router.get("/{document_id}", response_model=DocumentResponse)
@@ -75,7 +75,7 @@ async def get_document(
     current_user: dict = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
-    doc = await document_service.get_document(db, document_id, uuid.UUID(current_user["id"]))
+    doc = await document_service.get_document(db, document_id, current_user.id)
     if not doc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Document not found")
     return doc
@@ -86,7 +86,7 @@ async def delete_document(
     current_user: dict = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
-    success = await document_service.delete_document(db, document_id, uuid.UUID(current_user["id"]))
+    success = await document_service.delete_document(db, document_id, current_user.id)
     if not success:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Document not found")
     return {"message": "Document deleted successfully"}
@@ -98,7 +98,7 @@ async def rename_document(
     current_user: dict = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
-    doc = await document_service.rename_document(db, document_id, uuid.UUID(current_user["id"]), rename_data.title)
+    doc = await document_service.rename_document(db, document_id, current_user.id, rename_data.title)
     if not doc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Document not found")
     return doc

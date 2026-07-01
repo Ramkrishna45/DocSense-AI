@@ -30,7 +30,7 @@ async def semantic_search(
 
         chunks = await rag_service.search_chunks(
             db, 
-            uuid.UUID(current_user["id"]), 
+            current_user.id, 
             search_request.query,
             query_embedding, 
             search_request.limit,
