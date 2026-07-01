@@ -87,32 +87,15 @@ export default function UploadPage() {
       {sourceType === 'file' ? (
         <>
           <UploadDropzone 
-            onFilesAdded={(newFiles) => setFiles(prev => [...prev, ...newFiles])} 
+            files={files}
+            onFilesChange={setFiles}
           />
 
           {files.length > 0 && (
-            <div className="space-y-4">
-              <h3 className="font-medium text-slate-200">Selected Files ({files.length})</h3>
-              <ul className="space-y-2">
-                {files.map((file, i) => (
-                  <li key={i} className="flex justify-between items-center p-3 rounded-lg bg-slate-900/50 border border-slate-800">
-                    <span className="truncate flex-1 text-sm text-slate-300">{file.name}</span>
-                    <span className="text-xs text-slate-500 ml-4">{(file.size / (1024 * 1024)).toFixed(2)} MB</span>
-                    <button 
-                      onClick={() => setFiles(files.filter((_, idx) => idx !== i))}
-                      className="ml-4 text-rose-400 hover:text-rose-300"
-                    >
-                      ✕
-                    </button>
-                  </li>
-                ))}
-              </ul>
-              
-              <div className="flex justify-end pt-4">
-                <Button variant="primary" onClick={handleUpload} loading={isUploading}>
-                  Upload All Files
-                </Button>
-              </div>
+            <div className="flex justify-end pt-4">
+              <Button variant="primary" onClick={handleUpload} loading={isUploading}>
+                Upload All Files
+              </Button>
             </div>
           )}
         </>

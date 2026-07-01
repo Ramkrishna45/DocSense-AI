@@ -15,7 +15,7 @@ export default function ExistingChatPage() {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const res = await apiFetch(`/api/chat/conversations/${id}`);
+        const res = await apiFetch<Message[]>(`/api/chat/conversations/${id}`);
         setMessages(res || []);
       } catch (error) {
         console.error('Failed to fetch messages:', error);
@@ -45,7 +45,7 @@ export default function ExistingChatPage() {
     setMessages(prev => [...prev, optimisticUserMessage]);
     
     try {
-      const res = await apiFetch('/api/chat', {
+      const res = await apiFetch<any>('/api/chat', {
         method: 'POST',
         body: JSON.stringify({ message: messageText, conversation_id: id }),
       });

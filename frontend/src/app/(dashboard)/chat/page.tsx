@@ -12,7 +12,7 @@ export default function NewChatPage() {
   const handleSendMessage = async (message: string) => {
     setIsSending(true);
     try {
-      const res = await apiFetch('/api/chat', {
+      const res = await apiFetch<any>('/api/chat', {
         method: 'POST',
         body: JSON.stringify({ message }),
       });

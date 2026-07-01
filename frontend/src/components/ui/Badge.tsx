@@ -3,7 +3,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 
-type BadgeVariant = 'pending' | 'processing' | 'indexed' | 'error' | 'default';
+type BadgeVariant = 'pending' | 'processing' | 'indexed' | 'completed' | 'error' | 'failed' | 'default';
 type BadgeSize = 'sm' | 'md';
 
 interface BadgeProps {
@@ -18,7 +18,9 @@ const variantClasses: Record<BadgeVariant, string> = {
   pending: 'bg-amber-400/10 text-amber-400 border-amber-400/20',
   processing: 'bg-blue-400/10 text-blue-400 border-blue-400/20',
   indexed: 'bg-emerald-400/10 text-emerald-400 border-emerald-400/20',
+  completed: 'bg-emerald-400/10 text-emerald-400 border-emerald-400/20',
   error: 'bg-rose-400/10 text-rose-400 border-rose-400/20',
+  failed: 'bg-rose-400/10 text-rose-400 border-rose-400/20',
   default: 'bg-white/5 text-[var(--text-secondary)] border-white/10',
 };
 
@@ -26,7 +28,9 @@ const dotColors: Record<BadgeVariant, string> = {
   pending: 'bg-amber-400',
   processing: 'bg-blue-400 animate-pulse',
   indexed: 'bg-emerald-400',
+  completed: 'bg-emerald-400',
   error: 'bg-rose-400',
+  failed: 'bg-rose-400',
   default: 'bg-gray-400',
 };
 
