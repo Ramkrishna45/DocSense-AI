@@ -26,6 +26,27 @@ export default function DocumentsPage() {
     }
   };
 
+  const handleDelete = async (id: string) => {
+    try {
+      await apiFetch(`/api/documents/${id}`, { method: 'DELETE' });
+      await fetchDocuments();
+    } catch (error) {
+      console.error('Failed to delete document:', error);
+    }
+  };
+
+  const handleRename = async (id: string, newTitle: string) => {
+    try {
+      await apiFetch(`/api/documents/${id}/rename`, {
+        method: 'PATCH',
+        body: JSON.stringify({ title: newTitle })
+      });
+      await fetchDocuments();
+    } catch (error) {
+      console.error('Failed to rename document:', error);
+    }
+  };
+
   useEffect(() => {
     fetchDocuments();
   }, []);
@@ -62,7 +83,7 @@ export default function DocumentsPage() {
       ) : filteredDocs.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {filteredDocs.map(doc => (
-            <DocumentCard key={doc.id} document={doc} onDelete={fetchDocuments} onRename={fetchDocuments} />
+            <DocumentCard key={doc.id} document={doc} onDelete={handleDelete} onRename={handleRename} />
           ))}
         </div>
       ) : (
