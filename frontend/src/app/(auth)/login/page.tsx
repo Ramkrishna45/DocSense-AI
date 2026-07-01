@@ -2,12 +2,17 @@
 
 import React, { useState } from 'react';
 import { motion, Variants } from 'framer-motion';
-// import { useAuth } from '@/lib/auth';
+import { useAuth } from '@/lib/auth';
 import { Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 export default function LoginPage() {
-  // const { login } = useAuth();
+  const { login } = useAuth();
+  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const containerVariants: Variants = {
@@ -28,11 +33,16 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulate login
-    setTimeout(() => {
-      // login();
+    try {
+      await login(email, password);
+      toast.success('Successfully logged in!');
+      router.push('/');
+    } catch (error: any) {
+      toast.error('Failed to login: ' + (error.message || 'Unknown error'));
+      console.error(error);
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   return (
@@ -63,6 +73,8 @@ export default function LoginPage() {
             <input
               id="email"
               type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 bg-background/50 border border-input rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
               placeholder="you@example.com"
               required
@@ -82,6 +94,8 @@ export default function LoginPage() {
             <input
               id="password"
               type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 bg-background/50 border border-input rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
               placeholder="••••••••"
               required

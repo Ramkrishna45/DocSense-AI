@@ -2,12 +2,18 @@
 
 import React, { useState } from 'react';
 import { motion, Variants } from 'framer-motion';
-// import { useAuth } from '@/lib/auth';
+import { useAuth } from '@/lib/auth';
 import { Mail, Lock, User, ArrowRight, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 export default function RegisterPage() {
-  // const { register } = useAuth();
+  const { register } = useAuth();
+  const router = useRouter();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const containerVariants: Variants = {
@@ -28,11 +34,16 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulate register
-    setTimeout(() => {
-      // register();
+    try {
+      await register(name, email, password);
+      toast.success('Successfully registered and logged in!');
+      router.push('/');
+    } catch (error: any) {
+      toast.error('Failed to register: ' + (error.message || 'Unknown error'));
+      console.error(error);
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   return (
@@ -63,6 +74,8 @@ export default function RegisterPage() {
             <input
               id="name"
               type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 bg-background/50 border border-input rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
               placeholder="John Doe"
               required
@@ -79,6 +92,8 @@ export default function RegisterPage() {
             <input
               id="email"
               type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 bg-background/50 border border-input rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
               placeholder="you@example.com"
               required
@@ -95,9 +110,12 @@ export default function RegisterPage() {
             <input
               id="password"
               type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 bg-background/50 border border-input rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
               placeholder="••••••••"
               required
+              minLength={6}
             />
           </div>
         </motion.div>
