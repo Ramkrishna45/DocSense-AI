@@ -17,3 +17,4 @@ youtube-transcript-api
 beautifulsoup4
 markdown
 email-validator
+langchain-text-splitters
