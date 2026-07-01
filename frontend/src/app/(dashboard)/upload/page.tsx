@@ -15,9 +15,11 @@ export default function UploadPage() {
   const [sourceType, setSourceType] = useState<'file' | 'url' | 'youtube' | 'github'>('file');
   const [sourceUrl, setSourceUrl] = useState('');
   const [sourceTitle, setSourceTitle] = useState('');
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const handleUpload = async () => {
     setIsUploading(true);
+    setUploadError(null);
     
     try {
       if (sourceType === 'file') {
@@ -47,8 +49,9 @@ export default function UploadPage() {
       }
       
       router.push('/documents');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Upload failed:', error);
+      setUploadError(error.message || 'Failed to upload document');
     } finally {
       setIsUploading(false);
     }
@@ -63,6 +66,12 @@ export default function UploadPage() {
         </p>
       </div>
       
+      {uploadError && (
+        <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm">
+          {uploadError}
+        </div>
+      )}
+
       <div className="flex gap-2 p-1 bg-slate-900/50 rounded-xl border border-slate-800">
         {[
           { id: 'file', label: '📄 Files' },
