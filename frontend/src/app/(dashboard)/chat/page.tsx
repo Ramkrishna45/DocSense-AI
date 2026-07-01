@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Send, Bot, User, Sparkles, CornerDownLeft } from "lucide-react";
 import { motion } from "framer-motion";
+import { sendChatMessage } from '@/lib/api';
 
 const TypingIndicator = () => (
   <div className="flex items-center gap-1.5 px-2 py-1">
@@ -44,21 +45,31 @@ export default function ChatPage() {
   const [isTyping, setIsTyping] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!input.trim()) return;
     
-    setMessages(prev => [...prev, { id: Date.now(), text: input, isBot: false }]);
+    const userMessage = input;
+    setMessages(prev => [...prev, { id: Date.now(), text: userMessage, isBot: false }]);
     setInput("");
     setIsTyping(true);
     
-    setTimeout(() => {
-      setIsTyping(false);
+    try {
+      const response = await sendChatMessage(userMessage);
       setMessages(prev => [...prev, { 
         id: Date.now() + 1, 
-        text: "I am currently not connected to the backend API.", 
+        text: response.message.content, 
         isBot: true 
       }]);
-    }, 1500);
+    } catch (error: any) {
+      console.error("Chat error:", error);
+      setMessages(prev => [...prev, { 
+        id: Date.now() + 1, 
+        text: "Sorry, I encountered an error communicating with the server.", 
+        isBot: true 
+      }]);
+    } finally {
+      setIsTyping(false);
+    }
   };
 
   useEffect(() => {

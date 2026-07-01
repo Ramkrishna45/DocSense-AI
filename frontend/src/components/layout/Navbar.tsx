@@ -10,9 +10,18 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'; // Modify path if needed
+} from '@/components/ui/dropdown-menu';
+import { useAuth } from '@/lib/auth';
+import { useRouter } from 'next/navigation';
 
 export default function Navbar() {
+  const { user, logout } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    logout();
+    router.push('/login');
+  };
   return (
     <header className="sticky top-0 z-40 w-full glass border-b border-border/50 h-16 flex items-center px-4 md:px-6 justify-between">
       <div className="flex items-center flex-1">
@@ -43,14 +52,14 @@ export default function Navbar() {
           <DropdownMenuTrigger asChild>
             <button className="relative w-9 h-9 rounded-full overflow-hidden border-2 border-border hover:border-primary/50 transition-colors focus:outline-none">
               <img
-                src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
+                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name || 'Felix'}`}
                 alt="User Avatar"
                 className="w-full h-full object-cover bg-secondary"
               />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56 glass-card border-border/50">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuLabel>{user?.name || 'My Account'}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="cursor-pointer flex items-center">
               <UserIcon className="mr-2 h-4 w-4" />
@@ -61,7 +70,7 @@ export default function Navbar() {
               <span>Settings</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer flex items-center text-destructive focus:text-destructive">
+            <DropdownMenuItem onClick={handleLogout} className="cursor-pointer flex items-center text-destructive focus:text-destructive">
               <LogOut className="mr-2 h-4 w-4" />
               <span>Log out</span>
             </DropdownMenuItem>

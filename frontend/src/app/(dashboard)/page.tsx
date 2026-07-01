@@ -1,10 +1,34 @@
-import React from 'react';
+"use client";
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, Database, Activity, Clock, ArrowRight } from "lucide-react";
+import { FileText, Database, Activity, Clock, ArrowRight, Loader2 } from "lucide-react";
 import Link from 'next/link';
+import { getStats, getDocuments } from '@/lib/api';
+import type { UserStats, Document } from '@/types';
 
 export default function DashboardPage() {
+  const [stats, setStats] = useState<UserStats | null>(null);
+  const [documents, setDocuments] = useState<Document[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [statsData, docsData] = await Promise.all([
+          getStats(),
+          getDocuments()
+        ]);
+        setStats(statsData);
+        setDocuments(docsData.slice(0, 5)); // Show top 5
+      } catch (error) {
+        console.error("Failed to load dashboard data", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
   return (
     <div className="space-y-8 p-8 animate-in fade-in duration-500">
       <div className="flex justify-between items-center">
@@ -34,12 +58,14 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-6xl font-bold text-white tracking-tighter">
-              0
+              {loading ? <Loader2 className="w-10 h-10 animate-spin text-zinc-500" /> : stats?.total_chunks || 0}
             </div>
-            <p className="text-sm text-emerald-400 mt-2 flex items-center gap-1">
-              <Activity className="w-4 h-4" />
-              +1,204 this week
-            </p>
+            {!loading && (
+              <p className="text-sm text-emerald-400 mt-2 flex items-center gap-1">
+                <Activity className="w-4 h-4" />
+                Updated just now
+              </p>
+            )}
           </CardContent>
         </Card>
 
@@ -54,12 +80,14 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-6xl font-bold text-white tracking-tighter">
-              0
+              {loading ? <Loader2 className="w-10 h-10 animate-spin text-zinc-500" /> : stats?.document_count || 0}
             </div>
-            <p className="text-sm text-emerald-400 mt-2 flex items-center gap-1">
-              <Activity className="w-4 h-4" />
-              +12 this week
-            </p>
+            {!loading && (
+              <p className="text-sm text-emerald-400 mt-2 flex items-center gap-1">
+                <Activity className="w-4 h-4" />
+                Total uploaded files
+              </p>
+            )}
           </CardContent>
         </Card>
 
@@ -78,9 +106,44 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="py-8 text-center text-zinc-500 border border-white/5 border-dashed rounded-xl">
-                <p>No recent documents.</p>
-              </div>
+              {loading ? (
+                <div className="py-8 text-center flex justify-center">
+                  <Loader2 className="w-6 h-6 animate-spin text-zinc-500" />
+                </div>
+              ) : documents.length === 0 ? (
+                <div className="py-8 text-center text-zinc-500 border border-white/5 border-dashed rounded-xl">
+                  <p>No recent documents.</p>
+                </div>
+              ) : (
+                documents.map((doc) => (
+                  <div key={doc.id} className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors group cursor-pointer">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-lg bg-indigo-500/20 flex items-center justify-center">
+                        <FileText className="w-5 h-5 text-indigo-400" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-white group-hover:text-indigo-300 transition-colors">{doc.title}</h4>
+                        <div className="flex items-center gap-3 text-sm text-zinc-500">
+                          <span className="flex items-center gap-1"><Database className="w-3 h-3" /> {(doc.size / (1024 * 1024)).toFixed(2)} MB</span>
+                          <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {new Date(doc.created_at).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium border ${
+                        doc.status === 'completed' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/20' :
+                        doc.status === 'failed' ? 'bg-red-500/20 text-red-400 border-red-500/20' :
+                        'bg-amber-500/20 text-amber-400 border-amber-500/20'
+                      }`}>
+                        {doc.status.charAt(0).toUpperCase() + doc.status.slice(1)}
+                      </span>
+                      <Button size="icon" variant="ghost" className="text-zinc-400 group-hover:text-white">
+                        <ArrowRight className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </CardContent>
         </Card>
