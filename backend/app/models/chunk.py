@@ -42,7 +42,7 @@ class Chunk(Base):
     # HNSW index for fast cosine similarity search
     __table_args__ = (
         Index(
-            "ix_chunks_embedding_hnsw",
+            "ix_chunks_embedding_hnsw_v2",
             embedding,
             postgresql_using="hnsw",
             postgresql_with={"m": 16, "ef_construction": 64},

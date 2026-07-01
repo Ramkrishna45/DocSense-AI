@@ -53,6 +53,7 @@ async def init_db() -> None:
         await conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
         # Drop chunks table to allow dimension migration
         await conn.execute(text("DROP TABLE IF EXISTS chunks CASCADE"))
+        await conn.execute(text("DROP TABLE IF EXISTS document_chunks CASCADE"))
         # Create all tables from registered models
         await conn.run_sync(Base.metadata.create_all)
 
