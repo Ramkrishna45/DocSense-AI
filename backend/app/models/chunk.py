@@ -39,16 +39,8 @@ class Chunk(Base):
     # Relationships
     document: Mapped["Document"] = relationship("Document", back_populates="chunks")
 
-    # HNSW index for fast cosine similarity search
-    __table_args__ = (
-        Index(
-            "ix_chunks_embedding_hnsw_v2",
-            embedding,
-            postgresql_using="hnsw",
-            postgresql_with={"m": 16, "ef_construction": 64},
-            postgresql_ops={"embedding": "vector_cosine_ops"},
-        ),
-    )
+    # No index defined because pgvector HNSW index has a 2000 dimension limit,
+    # and Gemini embeddings are 3072 dimensions. Exact search is fast enough for MVP.
 
     def __repr__(self) -> str:
         return f"<Chunk(id={self.id}, doc={self.document_id}, num={self.chunk_number})>"
