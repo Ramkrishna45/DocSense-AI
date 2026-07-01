@@ -51,7 +51,7 @@ class EmbeddingService:
             from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
             self._model = GoogleGenerativeAIEmbeddings(
-                model="models/text-embedding-004",
+                model="models/gemini-embedding-2",
                 google_api_key=settings.GOOGLE_API_KEY,
             )
             logger.info("Embedding model loaded successfully")
