@@ -3,15 +3,15 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Users, Settings, Activity, FileText, ChevronRight } from 'lucide-react';
+import { LayoutDashboard, FileText, MessageSquare, Search as SearchIcon, UploadCloud, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils'; // Assuming cn utility exists from shadcn
 
 const navItems = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Analytics', href: '/dashboard/analytics', icon: Activity },
-  { name: 'Users', href: '/dashboard/users', icon: Users },
-  { name: 'Documents', href: '/dashboard/documents', icon: FileText },
-  { name: 'Settings', href: '/dashboard/settings', icon: Settings },
+  { name: 'Dashboard', href: '/', icon: LayoutDashboard },
+  { name: 'Documents', href: '/documents', icon: FileText },
+  { name: 'AI Chat', href: '/chat', icon: MessageSquare },
+  { name: 'Semantic Search', href: '/search', icon: SearchIcon },
+  { name: 'Upload', href: '/upload', icon: UploadCloud },
 ];
 
 export default function Sidebar() {
