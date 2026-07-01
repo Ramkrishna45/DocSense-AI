@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState, useRef, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { UploadCloud, FileText, FileSpreadsheet, File, X, AlertTriangle } from 'lucide-react';
 import { cn, formatFileSize } from '@/lib/utils';
 
 interface UploadDropzoneProps {
@@ -16,6 +18,13 @@ const ACCEPTED_MIMES = [
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   'text/plain',
 ];
+
+function getFileIcon(filename: string) {
+  const ext = filename.split('.').pop()?.toLowerCase();
+  if (ext === 'pdf') return <FileText className="w-5 h-5 text-rose-400" />;
+  if (ext === 'docx' || ext === 'doc') return <FileSpreadsheet className="w-5 h-5 text-blue-400" />;
+  return <File className="w-5 h-5 text-slate-400" />;
+}
 
 export default function UploadDropzone({
   files,
@@ -93,28 +102,44 @@ export default function UploadDropzone({
     onFilesChange(files.filter((_, i) => i !== index));
   };
 
-  const getFileIcon = (filename: string) => {
-    const ext = filename.split('.').pop()?.toLowerCase();
-    if (ext === 'pdf') return '📄';
-    if (ext === 'docx' || ext === 'doc') return '📝';
-    return '📃';
-  };
-
   return (
     <div className="space-y-4">
       {/* Dropzone */}
-      <div
+      <motion.div
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         onClick={() => inputRef.current?.click()}
         className={cn(
-          'relative flex flex-col items-center justify-center gap-4 p-10 rounded-2xl border-2 border-dashed cursor-pointer transition-all duration-300',
+          'relative flex flex-col items-center justify-center gap-4 p-10 rounded-2xl border-2 border-dashed cursor-pointer transition-colors duration-300',
           isDragOver
-            ? 'border-cyan-500 bg-cyan-500/10 scale-[1.02]'
-            : 'border-[var(--glass-border)] bg-[var(--glass-bg)] hover:border-cyan-500/30 hover:bg-[var(--glass-bg-hover)]',
+            ? 'border-cyan-400 bg-cyan-500/10'
+            : 'border-slate-700/60 bg-[var(--glass-bg)] hover:border-cyan-500/30 hover:bg-[var(--glass-bg-hover)]',
         )}
+        animate={{
+          scale: isDragOver ? 1.02 : 1,
+          boxShadow: isDragOver
+            ? '0 0 30px rgba(6, 182, 212, 0.15), 0 0 60px rgba(6, 182, 212, 0.05)'
+            : '0 0 0px rgba(6, 182, 212, 0)',
+        }}
+        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
       >
+        {/* Animated glow border overlay on drag */}
+        <AnimatePresence>
+          {isDragOver && (
+            <motion.div
+              className="absolute inset-0 rounded-2xl pointer-events-none"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              style={{
+                background: 'linear-gradient(135deg, rgba(6,182,212,0.08), rgba(16,185,129,0.08))',
+              }}
+            />
+          )}
+        </AnimatePresence>
+
         <input
           ref={inputRef}
           type="file"
@@ -126,40 +151,49 @@ export default function UploadDropzone({
         />
 
         {/* Animated icon */}
-        <div
+        <motion.div
           className={cn(
-            'p-4 rounded-2xl transition-all duration-300',
+            'p-4 rounded-2xl border transition-colors duration-300',
             isDragOver
-              ? 'bg-cyan-500/20 scale-110'
-              : 'bg-white/5',
+              ? 'bg-cyan-500/15 border-cyan-500/30'
+              : 'bg-white/5 border-transparent',
           )}
+          animate={{
+            y: isDragOver ? [-4, 4, -4] : [0, -6, 0],
+            scale: isDragOver ? 1.1 : 1,
+          }}
+          transition={{
+            y: {
+              duration: isDragOver ? 0.6 : 3,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            },
+            scale: { type: 'spring', stiffness: 300, damping: 15 },
+          }}
         >
-          <svg
+          <UploadCloud
             className={cn(
               'w-10 h-10 transition-colors duration-300',
-              isDragOver ? 'text-cyan-400' : 'text-[var(--text-muted)]',
+              isDragOver ? 'text-cyan-400' : 'text-slate-400',
             )}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={1.5}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-            />
-          </svg>
-        </div>
+          />
+        </motion.div>
 
-        <div className="text-center">
+        <div className="text-center relative z-10">
           <p className="text-sm font-medium text-[var(--text-primary)]">
             {isDragOver ? (
-              <span className="text-cyan-400">Drop files here</span>
+              <motion.span
+                className="text-cyan-400"
+                initial={{ scale: 0.9 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 15 }}
+              >
+                Drop files here
+              </motion.span>
             ) : (
               <>
                 Drag & drop files here, or{' '}
-                <span className="text-cyan-400 hover:text-cyan-300">
+                <span className="text-cyan-400 hover:text-cyan-300 transition-colors">
                   browse
                 </span>
               </>
@@ -169,60 +203,84 @@ export default function UploadDropzone({
             PDF, DOCX, TXT — up to {maxSizeMB}MB each
           </p>
         </div>
-      </div>
+      </motion.div>
 
       {/* Errors */}
-      {errors.length > 0 && (
-        <div className="space-y-1">
-          {errors.map((err, i) => (
-            <p key={i} className="text-xs text-rose-400 flex items-center gap-1.5">
-              <svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
-              {err}
-            </p>
-          ))}
-        </div>
-      )}
+      <AnimatePresence>
+        {errors.length > 0 && (
+          <motion.div
+            className="space-y-1"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.25 }}
+          >
+            {errors.map((err, i) => (
+              <motion.p
+                key={i}
+                className="text-xs text-rose-400 flex items-center gap-1.5"
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.05 }}
+              >
+                <AlertTriangle className="w-3 h-3 shrink-0" />
+                {err}
+              </motion.p>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* File list */}
-      {files.length > 0 && (
-        <div className="space-y-2">
-          <h4 className="text-sm font-medium text-[var(--text-secondary)]">
-            {files.length} file{files.length > 1 ? 's' : ''} selected
-          </h4>
-          <div className="space-y-1.5">
-            {files.map((file, index) => (
-              <div
-                key={`${file.name}-${index}`}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-xl glass animate-fadeInUp"
-              >
-                <span className="text-xl">{getFileIcon(file.name)}</span>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-[var(--text-primary)] truncate">
-                    {file.name}
-                  </p>
-                  <p className="text-xs text-[var(--text-muted)]">
-                    {formatFileSize(file.size)}
-                  </p>
-                </div>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    removeFile(index);
-                  }}
-                  className="p-1 rounded-lg text-[var(--text-muted)] hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
-                  id={`remove-file-${index}`}
+      <AnimatePresence>
+        {files.length > 0 && (
+          <motion.div
+            className="space-y-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <h4 className="text-sm font-medium text-[var(--text-secondary)]">
+              {files.length} file{files.length > 1 ? 's' : ''} selected
+            </h4>
+            <div className="space-y-1.5">
+              {files.map((file, index) => (
+                <motion.div
+                  key={`${file.name}-${index}`}
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl glass border border-slate-700/30 hover:border-cyan-500/20 transition-colors"
+                  initial={{ opacity: 0, y: 12, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, x: -20, scale: 0.9 }}
+                  transition={{ duration: 0.3, delay: index * 0.05 }}
+                  layout
                 >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+                  <div className="shrink-0">{getFileIcon(file.name)}</div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-[var(--text-primary)] truncate">
+                      {file.name}
+                    </p>
+                    <p className="text-xs text-[var(--text-muted)]">
+                      {formatFileSize(file.size)}
+                    </p>
+                  </div>
+                  <motion.button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeFile(index);
+                    }}
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+                    id={`remove-file-${index}`}
+                    whileHover={{ scale: 1.15 }}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    <X className="w-4 h-4" />
+                  </motion.button>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

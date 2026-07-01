@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FileText, FileSpreadsheet, File, FileCode, Download, Pencil, Trash2 } from 'lucide-react';
 import Badge from '@/components/ui/Badge';
 import Card from '@/components/ui/Card';
 import Link from 'next/link';
-import { formatFileSize, formatDate, getFileIcon, truncateText } from '@/lib/utils';
+import { formatFileSize, formatDate, truncateText } from '@/lib/utils';
 import type { Document } from '@/types';
 
 interface DocumentCardProps {
@@ -13,6 +15,42 @@ interface DocumentCardProps {
   onDelete?: (id: string) => void;
   onDownload?: (id: string) => void;
   viewMode?: 'grid' | 'list';
+}
+
+function getFileTypeIcon(filename: string) {
+  const ext = filename.split('.').pop()?.toLowerCase();
+  switch (ext) {
+    case 'pdf':
+      return <FileText className="w-full h-full" />;
+    case 'docx':
+    case 'doc':
+      return <FileSpreadsheet className="w-full h-full" />;
+    case 'md':
+    case 'mdx':
+      return <FileCode className="w-full h-full" />;
+    case 'txt':
+      return <File className="w-full h-full" />;
+    default:
+      return <File className="w-full h-full" />;
+  }
+}
+
+function getFileIconColor(filename: string) {
+  const ext = filename.split('.').pop()?.toLowerCase();
+  switch (ext) {
+    case 'pdf':
+      return 'text-rose-400 bg-rose-500/15 border-rose-500/20';
+    case 'docx':
+    case 'doc':
+      return 'text-blue-400 bg-blue-500/15 border-blue-500/20';
+    case 'md':
+    case 'mdx':
+      return 'text-purple-400 bg-purple-500/15 border-purple-500/20';
+    case 'txt':
+      return 'text-slate-400 bg-slate-500/15 border-slate-500/20';
+    default:
+      return 'text-slate-400 bg-slate-500/15 border-slate-500/20';
+  }
 }
 
 export default function DocumentCard({
@@ -24,6 +62,7 @@ export default function DocumentCard({
 }: DocumentCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(doc.title);
+  const [isHovered, setIsHovered] = useState(false);
 
   const handleRename = () => {
     if (editTitle.trim() && editTitle !== doc.title && onRename) {
@@ -40,14 +79,91 @@ export default function DocumentCard({
     }
   };
 
+  const actionButtons = (
+    <AnimatePresence>
+      {isHovered && (
+        <motion.div
+          className="flex items-center gap-0.5 z-20"
+          initial={{ opacity: 0, x: 8 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: 8 }}
+          transition={{ duration: 0.2, ease: 'easeOut' }}
+        >
+          {onDownload && (
+            <motion.button
+              id={`doc-download-${doc.id}`}
+              onClick={() => onDownload(doc.id)}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-cyan-400 hover:bg-cyan-500/10 transition-colors pointer-events-auto"
+              title="Download"
+              whileHover={{ scale: 1.15 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <Download className="w-4 h-4" />
+            </motion.button>
+          )}
+          {onRename && (
+            <motion.button
+              id={`doc-rename-${doc.id}`}
+              onClick={() => setIsEditing(true)}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-cyan-400 hover:bg-cyan-500/10 transition-colors pointer-events-auto"
+              title="Rename"
+              whileHover={{ scale: 1.15 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <Pencil className="w-4 h-4" />
+            </motion.button>
+          )}
+          {onDelete && (
+            <motion.button
+              id={`doc-delete-${doc.id}`}
+              onClick={() => onDelete(doc.id)}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors pointer-events-auto"
+              title="Delete"
+              whileHover={{ scale: 1.15 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <Trash2 className="w-4 h-4" />
+            </motion.button>
+          )}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+
+  const statusGlow =
+    doc.status === 'completed'
+      ? 'shadow-emerald-500/20 shadow-sm'
+      : '';
+
   if (viewMode === 'list') {
     return (
-      <div className="relative group hover-lift animate-fadeIn">
-        <div className="absolute inset-0 rounded-[var(--radius-lg)] gradient-border opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+      <motion.div
+        className="relative group"
+        onHoverStart={() => setIsHovered(true)}
+        onHoverEnd={() => setIsHovered(false)}
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35, ease: 'easeOut' }}
+        whileHover={{ y: -2 }}
+      >
+        {/* Gradient border on hover */}
+        <motion.div
+          className="absolute -inset-[1px] rounded-[var(--radius-lg)] bg-gradient-to-r from-cyan-500/40 via-emerald-500/40 to-cyan-500/40 pointer-events-none"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isHovered ? 1 : 0 }}
+          transition={{ duration: 0.3 }}
+        />
         <Card hover className="!p-3 relative z-10 glass bg-[var(--surface-1)]">
           <Link href={`/documents/${doc.id}`} className="absolute inset-0 z-0" />
           <div className="flex items-center gap-4 relative z-10">
-            <span className="text-2xl shrink-0 group-hover:scale-110 transition-transform duration-300">{getFileIcon(doc.original_filename)}</span>
+            {/* File icon */}
+            <motion.div
+              className={`shrink-0 w-9 h-9 rounded-lg border flex items-center justify-center p-2 ${getFileIconColor(doc.original_filename)}`}
+              animate={{ scale: isHovered ? 1.1 : 1 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 15 }}
+            >
+              {getFileTypeIcon(doc.original_filename)}
+            </motion.div>
             <div className="flex-1 min-w-0">
               {isEditing ? (
                 <input
@@ -57,11 +173,11 @@ export default function DocumentCard({
                   onBlur={handleRename}
                   onKeyDown={handleKeyDown}
                   autoFocus
-                  className="bg-transparent border-b border-[var(--color-primary)] text-sm font-medium text-[var(--text-primary)] outline-none w-full"
+                  className="bg-transparent border-b border-cyan-500 text-sm font-medium text-[var(--text-primary)] outline-none w-full"
                 />
               ) : (
                 <h3
-                  className="text-sm font-medium text-[var(--text-primary)] truncate cursor-pointer group-hover:text-[var(--color-primary)] transition-colors relative z-20 pointer-events-auto"
+                  className="text-sm font-medium text-[var(--text-primary)] truncate cursor-pointer group-hover:text-cyan-400 transition-colors relative z-20 pointer-events-auto"
                   onDoubleClick={() => setIsEditing(true)}
                   title="Double-click to rename"
                 >
@@ -72,70 +188,60 @@ export default function DocumentCard({
                 {doc.original_filename}
               </p>
             </div>
-            <div className="hidden sm:flex items-center gap-4 text-xs text-[var(--text-muted)] shrink-0">
+            <div className="hidden sm:flex items-center gap-3 text-xs text-[var(--text-muted)] shrink-0">
               <span className="bg-white/5 px-2 py-1 rounded-md">{formatFileSize(doc.size)}</span>
               <span className="bg-white/5 px-2 py-1 rounded-md">{doc.chunk_count} chunks</span>
               <span>{formatDate(doc.created_at)}</span>
             </div>
-            <Badge variant={doc.status} dot size="sm">
-              {doc.status}
-            </Badge>
+            <div className={statusGlow}>
+              <Badge variant={doc.status} dot size="sm">
+                {doc.status}
+              </Badge>
+            </div>
             <div className="flex items-center gap-1 shrink-0 z-20">
-              {onDownload && (
-                <button
-                  id={`doc-download-${doc.id}`}
-                  onClick={() => onDownload(doc.id)}
-                  className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--color-primary)] hover:bg-[var(--color-primary)]/10 transition-colors pointer-events-auto"
-                  title="Download"
-                >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                  </svg>
-                </button>
-              )}
-              {onRename && (
-                <button
-                  id={`doc-rename-${doc.id}`}
-                  onClick={() => setIsEditing(true)}
-                  className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--color-primary)] hover:bg-[var(--color-primary)]/10 transition-colors pointer-events-auto"
-                  title="Rename"
-                >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                  </svg>
-                </button>
-              )}
-              {onDelete && (
-                <button
-                  id={`doc-delete-${doc.id}`}
-                  onClick={() => onDelete(doc.id)}
-                  className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-rose-400 hover:bg-rose-500/10 transition-colors pointer-events-auto"
-                  title="Delete"
-                >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                </button>
-              )}
+              {actionButtons}
             </div>
           </div>
         </Card>
-      </div>
+      </motion.div>
     );
   }
 
   return (
-    <div className="relative group hover-lift animate-fadeIn">
-      <div className="absolute inset-0 rounded-[var(--radius-xl)] gradient-border opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+    <motion.div
+      className="relative group"
+      onHoverStart={() => setIsHovered(true)}
+      onHoverEnd={() => setIsHovered(false)}
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: 'easeOut' }}
+      whileHover={{ y: -4 }}
+      whileTap={{ scale: 0.98 }}
+    >
+      {/* Gradient border on hover */}
+      <motion.div
+        className="absolute -inset-[1px] rounded-[var(--radius-xl)] bg-gradient-to-r from-cyan-500/50 via-emerald-500/50 to-cyan-500/50 pointer-events-none"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: isHovered ? 1 : 0 }}
+        transition={{ duration: 0.3 }}
+      />
       <Card hover glow className="relative z-10 glass bg-[var(--surface-1)] h-full flex flex-col">
         <Link href={`/documents/${doc.id}`} className="absolute inset-0 z-0" />
         <div className="space-y-4 relative z-10 pointer-events-none flex-1 flex flex-col">
           {/* Icon + Status */}
           <div className="flex items-start justify-between pointer-events-auto">
-            <span className="text-4xl group-hover:scale-110 transition-transform duration-300 drop-shadow-md">{getFileIcon(doc.original_filename)}</span>
-            <Badge variant={doc.status} dot size="sm">
-              {doc.status}
-            </Badge>
+            <motion.div
+              className={`w-12 h-12 rounded-xl border flex items-center justify-center p-2.5 ${getFileIconColor(doc.original_filename)}`}
+              animate={{ scale: isHovered ? 1.1 : 1, rotate: isHovered ? 3 : 0 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 15 }}
+            >
+              {getFileTypeIcon(doc.original_filename)}
+            </motion.div>
+            <div className={statusGlow}>
+              <Badge variant={doc.status} dot size="sm">
+                {doc.status}
+              </Badge>
+            </div>
           </div>
 
           {/* Title */}
@@ -148,18 +254,17 @@ export default function DocumentCard({
                 onBlur={handleRename}
                 onKeyDown={handleKeyDown}
                 autoFocus
-                className="bg-transparent border-b border-[var(--color-primary)] text-sm font-medium text-[var(--text-primary)] outline-none w-full"
+                className="bg-transparent border-b border-cyan-500 text-sm font-medium text-[var(--text-primary)] outline-none w-full pointer-events-auto"
               />
             ) : (
               <h3
-                className="text-base font-semibold text-[var(--text-primary)] cursor-pointer group-hover:text-[var(--color-primary)] transition-colors pointer-events-auto leading-snug"
+                className="text-base font-semibold text-[var(--text-primary)] cursor-pointer group-hover:text-cyan-400 transition-colors pointer-events-auto leading-snug"
                 onDoubleClick={() => setIsEditing(true)}
                 title="Double-click to rename"
               >
                 {truncateText(doc.title, 40)}
               </h3>
             )}
-            
             <p className="text-xs text-[var(--text-muted)] mt-1.5 group-hover:text-[var(--text-secondary)] transition-colors truncate">
               {doc.original_filename}
             </p>
@@ -176,47 +281,10 @@ export default function DocumentCard({
             <span className="text-xs text-[var(--text-muted)] font-medium">
               {formatDate(doc.created_at)}
             </span>
-            <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity z-20">
-              {onDownload && (
-                <button
-                  id={`doc-grid-download-${doc.id}`}
-                  onClick={() => onDownload(doc.id)}
-                  className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--color-primary)] hover:bg-[var(--color-primary)]/10 transition-colors"
-                  title="Download"
-                >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                  </svg>
-                </button>
-              )}
-              {onRename && (
-                <button
-                  id={`doc-grid-rename-${doc.id}`}
-                  onClick={() => setIsEditing(true)}
-                  className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--color-primary)] hover:bg-[var(--color-primary)]/10 transition-colors"
-                  title="Rename"
-                >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                  </svg>
-                </button>
-              )}
-              {onDelete && (
-                <button
-                  id={`doc-grid-delete-${doc.id}`}
-                  onClick={() => onDelete(doc.id)}
-                  className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
-                  title="Delete"
-                >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                </button>
-              )}
-            </div>
+            {actionButtons}
           </div>
         </div>
       </Card>
-    </div>
+    </motion.div>
   );
 }
