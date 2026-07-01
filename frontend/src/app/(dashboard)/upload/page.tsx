@@ -4,6 +4,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { UploadCloud, File, X, FileCheck2, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { apiFetch } from "@/lib/api";
+import { toast } from "sonner";
 
 export default function UploadPage() {
   const [isDragging, setIsDragging] = useState(false);
@@ -13,6 +15,30 @@ export default function UploadPage() {
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(true);
+  };
+
+  const handleUpload = async () => {
+    if (files.length === 0) return;
+    setIsUploading(true);
+    
+    try {
+      for (const file of files) {
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        await apiFetch('/api/documents/upload', {
+          method: 'POST',
+          body: formData,
+        });
+      }
+      toast.success("Files uploaded successfully!");
+      setFiles([]);
+    } catch (error: any) {
+      toast.error("Upload failed: " + (error.message || "Unknown error"));
+      console.error("Upload error", error);
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handleDragLeave = (e: React.DragEvent) => {
@@ -108,10 +134,7 @@ export default function UploadPage() {
               <Button 
                 size="lg" 
                 className="bg-indigo-600 hover:bg-indigo-700 text-white min-w-[150px]"
-                onClick={() => {
-                  setIsUploading(true);
-                  setTimeout(() => setIsUploading(false), 2000); // Mock upload
-                }}
+                onClick={handleUpload}
                 disabled={isUploading}
               >
                 {isUploading ? (
