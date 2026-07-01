@@ -107,11 +107,8 @@ export default function LoginPage() {
         </motion.div>
       </motion.form>
 
-      <div className="mt-6 text-center text-sm text-muted-foreground">
-        Don't have an account?{' '}
-        <Link href="/register" className="text-primary font-medium hover:underline">
-          Create one
-        </Link>
+      <div className="mt-6 text-center">
+        <p className="text-sm text-muted-foreground">Don&apos;t have an account? <Link href="/register" className="text-primary hover:underline font-medium">Register</Link></p>
       </div>
     </motion.div>
   );

@@ -24,6 +24,7 @@ export function removeToken(): void {
 }
 
 /* ─── Generic fetch wrapper ─── */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function apiFetch<T = any>(
   endpoint: string,
   options: RequestInit = {},
@@ -48,11 +49,12 @@ export async function apiFetch<T = any>(
   });
 
   if (!res.ok) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let errorBody: any;
     try {
       errorBody = await res.json();
       console.error('API Error Response:', errorBody);
-    } catch (e) {
+    } catch (_) {
       errorBody = { detail: res.statusText || 'Unknown error' };
     }
     
@@ -61,6 +63,7 @@ export async function apiFetch<T = any>(
       if (typeof errorBody.detail === 'string') {
         message = errorBody.detail;
       } else if (Array.isArray(errorBody.detail)) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         message = errorBody.detail.map((e: any) => e.msg || JSON.stringify(e)).join(', ');
       } else {
         message = JSON.stringify(errorBody.detail);

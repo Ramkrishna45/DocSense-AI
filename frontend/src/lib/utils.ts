@@ -98,6 +98,6 @@ export function truncateText(text: string, maxLength: number): string {
   return text.slice(0, maxLength).trimEnd() + '…';
 }
 
-export function cn(...inputs: (ClassValue | ((...args: any[]) => any))[]) {
+export function cn(...inputs: (ClassValue | ((...args: unknown[]) => unknown))[]) {
   return twMerge(clsx(inputs as ClassValue[]))
 }

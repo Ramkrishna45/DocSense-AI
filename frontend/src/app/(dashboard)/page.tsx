@@ -10,7 +10,7 @@ export default function DashboardPage() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-4xl font-bold tracking-tight text-white mb-2">Overview</h1>
-          <p className="text-zinc-400">Welcome back! Here's what's happening with your knowledge base.</p>
+          <p className="text-zinc-400">Welcome back! Here&apos;s what&apos;s happening with your knowledge base.</p>
         </div>
         <div className="flex gap-4">
           <Link href="/upload">

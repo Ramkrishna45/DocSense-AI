@@ -1,12 +1,12 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FileText, Search, Filter, MoreVertical, Clock, Database, ChevronRight } from "lucide-react";
 import Link from 'next/link';
 
 // Custom DocumentCard component
-const DocumentCard = ({ title, size, date, status, id }: any) => (
+const DocumentCard = ({ title, size, date, status, id }: { title: string; size: string; date: string; status: string; id: string | number }) => (
   <Link href={`/documents/${id}`}>
     <Card className="glass-card bg-white/5 border-white/10 group hover:border-indigo-500/50 transition-all duration-300 cursor-pointer overflow-hidden relative">
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
