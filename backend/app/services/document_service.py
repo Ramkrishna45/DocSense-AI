@@ -10,6 +10,7 @@ import aiofiles
 from fastapi import HTTPException, UploadFile, status
 from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from app.database import async_session
 
 from app.config import settings
 from app.models.chunk import Chunk
@@ -127,73 +128,73 @@ async def upload_document(
     return document
 
 async def process_document(
-    db: AsyncSession,
     document_id: uuid.UUID,
     source: str,
     source_type: str,
     original_filename: str = ""
 ) -> None:
-    result = await db.execute(select(Document).where(Document.id == document_id))
-    document = result.scalar_one_or_none()
-    if not document:
-        return
-
-    try:
-        document.status = "processing"
-        await db.flush()
-
-        # 1. Extract Text
-        pages = process_source(source, source_type, original_filename)
-        
-        if not pages:
-            document.status = "completed"
-            await db.flush()
+    async with async_session() as db:
+        result = await db.execute(select(Document).where(Document.id == document_id))
+        document = result.scalar_one_or_none()
+        if not document:
             return
 
-        # 2. Generate Summary
-        full_text = " ".join([p[1] for p in pages])
-        # simple reading time estimate (250 words per minute)
-        word_count = len(full_text.split())
-        document.estimated_reading_time = max(1, word_count // 250)
-        
-        summary_data = await generate_document_summary(full_text)
-        document.summary = summary_data.get("summary")
-        document.key_topics = summary_data.get("key_topics")
-        document.keywords = summary_data.get("keywords")
+        try:
+            document.status = "processing"
+            await db.commit()
 
-        # 3. Chunking
-        chunks_data = chunk_text(pages)
-        if not chunks_data:
+            # 1. Extract Text
+            pages = process_source(source, source_type, original_filename)
+            
+            if not pages:
+                document.status = "completed"
+                await db.commit()
+                return
+
+            # 2. Generate Summary
+            full_text = " ".join([p[1] for p in pages])
+            # simple reading time estimate (250 words per minute)
+            word_count = len(full_text.split())
+            document.estimated_reading_time = max(1, word_count // 250)
+            
+            summary_data = await generate_document_summary(full_text)
+            document.summary = summary_data.get("summary")
+            document.key_topics = summary_data.get("key_topics")
+            document.keywords = summary_data.get("keywords")
+
+            # 3. Chunking
+            chunks_data = chunk_text(pages)
+            if not chunks_data:
+                document.status = "completed"
+                await db.commit()
+                return
+
+            # 4. Generate Embeddings
+            chunk_texts = [c["content"] for c in chunks_data]
+            embeddings = embedding_service.embed_documents(chunk_texts)
+
+            # 5. Store Chunks
+            chunk_objects = []
+            for chunk_data, embedding in zip(chunks_data, embeddings):
+                chunk_obj = Chunk(
+                    document_id=document_id,
+                    chunk_number=chunk_data["chunk_number"],
+                    page_number=chunk_data["page_number"],
+                    content=chunk_data["content"],
+                    embedding=embedding,
+                )
+                chunk_objects.append(chunk_obj)
+
+            db.add_all(chunk_objects)
+
             document.status = "completed"
-            await db.flush()
-            return
+            document.chunk_count = len(chunk_objects)
+            await db.commit()
 
-        # 4. Generate Embeddings
-        chunk_texts = [c["content"] for c in chunks_data]
-        embeddings = embedding_service.embed_documents(chunk_texts)
-
-        # 5. Store Chunks
-        chunk_objects = []
-        for chunk_data, embedding in zip(chunks_data, embeddings):
-            chunk_obj = Chunk(
-                document_id=document_id,
-                chunk_number=chunk_data["chunk_number"],
-                page_number=chunk_data["page_number"],
-                content=chunk_data["content"],
-                embedding=embedding,
-            )
-            chunk_objects.append(chunk_obj)
-
-        db.add_all(chunk_objects)
-
-        document.status = "completed"
-        document.chunk_count = len(chunk_objects)
-        await db.flush()
-
-    except Exception as e:
-        logger.error(f"Failed to process document {document_id}: {e}", exc_info=True)
-        document.status = "failed"
-        await db.flush()
+        except Exception as e:
+            logger.error(f"Failed to process document {document_id}: {e}", exc_info=True)
+            document.status = "failed"
+            await db.commit()
 
 async def get_user_documents(db: AsyncSession, user_id: uuid.UUID) -> list[Document]:
     result = await db.execute(

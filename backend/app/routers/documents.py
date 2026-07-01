@@ -40,7 +40,6 @@ async def upload_document(
             
         background_tasks.add_task(
             document_service.process_document,
-            db,
             doc.id,
             source,
             source_type,
