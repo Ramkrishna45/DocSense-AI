@@ -116,6 +116,10 @@ export async function getDocuments(): Promise<Document[]> {
   return res.documents || [];
 }
 
+export async function getDocument(id: string): Promise<Document> {
+  return apiFetch<Document>(`/api/documents/${id}`);
+}
+
 export async function uploadDocument(file: File): Promise<Document> {
   const formData = new FormData();
   formData.append('file', file);
