@@ -48,13 +48,29 @@ export async function apiFetch<T = any>(
   });
 
   if (!res.ok) {
-    const errorBody = await res.json().catch(() => ({ detail: res.statusText }));
-    const message =
-      typeof errorBody.detail === 'string'
-        ? errorBody.detail
-        : Array.isArray(errorBody.detail)
-          ? errorBody.detail.map((e: { msg: string }) => e.msg).join(', ')
-          : res.statusText;
+    let errorBody: any;
+    try {
+      errorBody = await res.json();
+      console.error('API Error Response:', errorBody);
+    } catch (e) {
+      errorBody = { detail: res.statusText || 'Unknown error' };
+    }
+    
+    let message = 'API Request Failed';
+    if (errorBody && errorBody.detail) {
+      if (typeof errorBody.detail === 'string') {
+        message = errorBody.detail;
+      } else if (Array.isArray(errorBody.detail)) {
+        message = errorBody.detail.map((e: any) => e.msg || JSON.stringify(e)).join(', ');
+      } else {
+        message = JSON.stringify(errorBody.detail);
+      }
+    } else if (errorBody && errorBody.message) {
+      message = errorBody.message;
+    } else if (res.statusText) {
+      message = res.statusText;
+    }
+    
     throw new Error(message);
   }
 
@@ -69,22 +85,10 @@ export async function login(
   email: string,
   password: string,
 ): Promise<{ access_token: string; token_type: string }> {
-  const formData = new URLSearchParams();
-  formData.append('username', email);
-  formData.append('password', password);
-
-  const res = await fetch(`${BASE_URL}/api/auth/login`, {
+  return apiFetch<{ access_token: string; token_type: string }>('/api/auth/login', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: formData,
+    body: JSON.stringify({ email, password }),
   });
-
-  if (!res.ok) {
-    const errorBody = await res.json().catch(() => ({ detail: res.statusText }));
-    throw new Error(errorBody.detail || 'Login failed');
-  }
-
-  return res.json();
 }
 
 export async function register(
