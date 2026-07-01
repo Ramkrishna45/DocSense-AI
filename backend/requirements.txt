@@ -16,3 +16,4 @@ aiofiles
 youtube-transcript-api
 beautifulsoup4
 markdown
+email-validator
