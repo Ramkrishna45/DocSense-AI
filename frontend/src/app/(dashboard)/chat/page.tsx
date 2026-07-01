@@ -3,13 +3,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Send, Bot, User, Sparkles, CornerDownLeft, FileText } from "lucide-react";
+import { Send, Bot, User, Sparkles, CornerDownLeft, FileText, MessageSquare, Plus, Loader2, Clock } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { sendChatMessage } from '@/lib/api';
-import type { SourceInfo } from '@/types';
+import { sendChatMessage, getConversations, getConversationMessages } from '@/lib/api';
+import type { SourceInfo, Conversation } from '@/types';
 
 type ChatMessage = {
-  id: number;
+  id: number | string;
   text: string;
   isBot: boolean;
   sources?: SourceInfo[];
@@ -93,12 +93,61 @@ const MessageBubble = ({ message, isBot, sources }: { message: string, isBot: bo
 };
 
 export default function ChatPage() {
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    { id: 1, text: "Hello! I'm your AI assistant. I have access to all your uploaded documents. What would you like to know?", isBot: true }
-  ]);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
+  
+  const initialMessage: ChatMessage = { 
+    id: 'initial', 
+    text: "Hello! I'm your AI assistant. I have access to all your uploaded documents. What would you like to know?", 
+    isBot: true 
+  };
+  
+  const [messages, setMessages] = useState<ChatMessage[]>([initialMessage]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    fetchConversations();
+  }, []);
+
+  const fetchConversations = async () => {
+    try {
+      const data = await getConversations();
+      setConversations(data);
+    } catch (error) {
+      console.error("Failed to load conversations", error);
+    }
+  };
+
+  const handleNewChat = () => {
+    setActiveConversationId(null);
+    setMessages([initialMessage]);
+  };
+
+  const handleSelectConversation = async (id: string) => {
+    setActiveConversationId(id);
+    setIsLoadingHistory(true);
+    try {
+      const history = await getConversationMessages(id);
+      if (history.length === 0) {
+        setMessages([initialMessage]);
+      } else {
+        setMessages(history.map(msg => ({
+          id: msg.id,
+          text: msg.content,
+          isBot: msg.role === 'assistant',
+          sources: msg.sources || []
+        })));
+      }
+    } catch (error) {
+      console.error("Failed to load history", error);
+      setMessages([{ id: Date.now(), text: "Failed to load conversation history.", isBot: true }]);
+    } finally {
+      setIsLoadingHistory(false);
+    }
+  };
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -109,7 +158,14 @@ export default function ChatPage() {
     setIsTyping(true);
     
     try {
-      const response = await sendChatMessage(userMessage);
+      const response = await sendChatMessage(userMessage, activeConversationId || undefined);
+      
+      // If this was a new chat, the backend created a conversation for us. Set it as active.
+      if (!activeConversationId && response.conversation_id) {
+        setActiveConversationId(response.conversation_id);
+        fetchConversations(); // refresh sidebar
+      }
+
       setMessages(prev => [...prev, { 
         id: Date.now() + 1, 
         text: response.message, 
@@ -133,11 +189,55 @@ export default function ChatPage() {
       const scrollElement = scrollRef.current;
       scrollElement.scrollTop = scrollElement.scrollHeight;
     }
-  }, [messages, isTyping]);
+  }, [messages, isTyping, isLoadingHistory]);
 
   return (
-    <div className="h-[calc(100vh-8rem)] flex flex-col items-center justify-center p-4 animate-in fade-in duration-500">
-      <Card className="glass-card bg-white/5 w-full max-w-4xl h-full flex flex-col overflow-hidden border-white/10">
+    <div className="h-[calc(100vh-8rem)] flex gap-6 p-6 animate-in fade-in duration-500 max-w-7xl mx-auto w-full">
+      {/* Sidebar for History */}
+      <div className="hidden md:flex flex-col w-72 shrink-0 space-y-4">
+        <Button 
+          onClick={handleNewChat}
+          className="w-full justify-start bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl h-12 shadow-lg shadow-indigo-500/20"
+        >
+          <Plus className="w-5 h-5 mr-2" /> New Chat
+        </Button>
+
+        <Card className="glass-card bg-white/5 border-white/10 flex-1 overflow-hidden flex flex-col rounded-2xl">
+          <div className="p-4 border-b border-white/10">
+            <h3 className="font-medium text-white flex items-center gap-2 text-sm">
+              <MessageSquare className="w-4 h-4 text-indigo-400" /> Recent Chats
+            </h3>
+          </div>
+          <div className="flex-1 overflow-y-auto p-2 space-y-1 custom-scrollbar">
+            {conversations.length === 0 ? (
+              <div className="text-center p-4 text-zinc-500 text-sm">No recent conversations</div>
+            ) : (
+              conversations.map(conv => (
+                <button
+                  key={conv.id}
+                  onClick={() => handleSelectConversation(conv.id)}
+                  className={`w-full text-left p-3 rounded-xl transition-all flex flex-col gap-1 ${
+                    activeConversationId === conv.id 
+                      ? 'bg-indigo-500/20 border border-indigo-500/30' 
+                      : 'hover:bg-white/5 border border-transparent'
+                  }`}
+                >
+                  <span className={`text-sm font-medium truncate w-full ${activeConversationId === conv.id ? 'text-indigo-300' : 'text-zinc-300'}`}>
+                    {conv.title}
+                  </span>
+                  <span className="text-[10px] text-zinc-500 flex items-center gap-1">
+                    <Clock className="w-3 h-3" />
+                    {new Date(conv.created_at).toLocaleDateString()}
+                  </span>
+                </button>
+              ))
+            )}
+          </div>
+        </Card>
+      </div>
+
+      {/* Main Chat Area */}
+      <Card className="glass-card bg-white/5 w-full h-full flex flex-col overflow-hidden border-white/10 rounded-2xl shadow-2xl">
         <div className="p-4 border-b border-white/10 flex items-center justify-between bg-black/20">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center">
@@ -152,21 +252,29 @@ export default function ChatPage() {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6 scroll-smooth" ref={scrollRef}>
-          {messages.map((msg) => (
-            <MessageBubble key={msg.id} message={msg.text} isBot={msg.isBot} sources={msg.sources} />
-          ))}
-          {isTyping && (
-            <div className="flex w-full justify-start mb-6">
-              <div className="flex max-w-[80%] flex-row items-end gap-3">
-                <div className="w-8 h-8 rounded-full border border-white/10 shrink-0 flex items-center justify-center bg-indigo-600 text-white">
-                  <Bot className="w-4 h-4" />
-                </div>
-                <div className="px-5 py-4 rounded-2xl bg-white/5 border border-white/10 rounded-bl-none backdrop-blur-sm">
-                  <TypingIndicator />
-                </div>
-              </div>
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 scroll-smooth custom-scrollbar" ref={scrollRef}>
+          {isLoadingHistory ? (
+            <div className="flex items-center justify-center h-full">
+              <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
             </div>
+          ) : (
+            <>
+              {messages.map((msg) => (
+                <MessageBubble key={msg.id} message={msg.text} isBot={msg.isBot} sources={msg.sources} />
+              ))}
+              {isTyping && (
+                <div className="flex w-full justify-start mb-6">
+                  <div className="flex max-w-[80%] flex-row items-end gap-3">
+                    <div className="w-8 h-8 rounded-full border border-white/10 shrink-0 flex items-center justify-center bg-indigo-600 text-white">
+                      <Bot className="w-4 h-4" />
+                    </div>
+                    <div className="px-5 py-4 rounded-2xl bg-white/5 border border-white/10 rounded-bl-none backdrop-blur-sm">
+                      <TypingIndicator />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
 
@@ -179,15 +287,15 @@ export default function ChatPage() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask anything about your documents..." 
-              className="w-full pl-4 pr-14 py-6 bg-white/5 border-white/10 text-white rounded-2xl focus-visible:ring-1 focus-visible:ring-indigo-500 placeholder:text-zinc-500 text-base shadow-inner"
+              className="w-full pl-5 pr-14 py-7 bg-white/5 border-white/10 text-white rounded-2xl focus-visible:ring-1 focus-visible:ring-indigo-500 placeholder:text-zinc-500 text-base shadow-inner"
             />
             <Button 
               type="submit" 
               size="icon"
-              disabled={!input.trim()} 
-              className="absolute right-2 w-10 h-10 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white disabled:opacity-50 transition-all"
+              disabled={!input.trim() || isTyping} 
+              className="absolute right-2 w-11 h-11 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white disabled:opacity-50 transition-all"
             >
-              <CornerDownLeft className="w-4 h-4" />
+              <CornerDownLeft className="w-5 h-5" />
             </Button>
           </form>
           <p className="text-center text-[11px] text-zinc-500 mt-3">
