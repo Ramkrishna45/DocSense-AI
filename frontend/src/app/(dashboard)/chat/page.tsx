@@ -1,160 +1,133 @@
-'use client';
+"use client";
+import React, { useState, useEffect, useRef } from 'react';
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Send, Bot, User, Sparkles, CornerDownLeft } from "lucide-react";
+import { motion } from "framer-motion";
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { motion, Variants } from 'framer-motion';
-import { BrainCircuit, Sparkles, BookOpen, Search, Lightbulb } from 'lucide-react';
-import ChatWindow from '@/components/chat/ChatWindow';
-import { apiFetch } from '@/lib/api';
+const TypingIndicator = () => (
+  <div className="flex items-center gap-1.5 px-2 py-1">
+    <motion.div className="w-2 h-2 rounded-full bg-indigo-400" animate={{ y: [0, -5, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0 }} />
+    <motion.div className="w-2 h-2 rounded-full bg-indigo-400" animate={{ y: [0, -5, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }} />
+    <motion.div className="w-2 h-2 rounded-full bg-indigo-400" animate={{ y: [0, -5, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }} />
+  </div>
+);
 
-const suggestionIcons = [Sparkles, BookOpen, Search] as const;
-
-export default function NewChatPage() {
-  const router = useRouter();
-  const [isSending, setIsSending] = useState(false);
-
-  const handleSendMessage = async (message: string) => {
-    setIsSending(true);
-    try {
-      const res = await apiFetch<any>('/api/chat', {
-        method: 'POST',
-        body: JSON.stringify({ message }),
-      });
-      // Redirect to the new conversation
-      if (res.conversation_id) {
-        router.push(`/chat/${res.conversation_id}`);
-      }
-    } catch (error) {
-      console.error('Failed to send message:', error);
-      setIsSending(false);
-    }
-  };
-
-  const suggestions = [
-    "Summarize my latest document",
-    "What are the key topics in my notes?",
-    "Compare concepts from different documents"
-  ];
-
-  const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.12, delayChildren: 0.4 },
-    },
-  };
-
-  const itemVariants: Variants = {
-    hidden: { opacity: 0, y: 20, scale: 0.95 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] },
-    },
-  };
-
-  const emptyState = (
-    <div className="max-w-lg mx-auto text-center space-y-8">
-      {/* Grand animated welcome */}
-      <motion.div
-        className="relative flex flex-col items-center gap-5"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, ease: 'easeOut' }}
-      >
-        {/* Glowing background circle */}
-        <div className="relative">
-          <motion.div
-            className="absolute -inset-4 rounded-full bg-gradient-to-tr from-cyan-500/20 to-emerald-500/20 blur-2xl"
-            animate={{
-              scale: [1, 1.3, 1],
-              opacity: [0.3, 0.5, 0.3],
-            }}
-            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-          />
-          <motion.div
-            className="relative w-20 h-20 rounded-2xl bg-gradient-to-tr from-cyan-500 to-emerald-500 flex items-center justify-center shadow-2xl shadow-emerald-500/30"
-            animate={{ rotate: [0, 3, -3, 0] }}
-            transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-          >
-            <BrainCircuit className="w-10 h-10 text-white" />
-          </motion.div>
-          {/* Orbiting accent */}
-          <motion.div
-            className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-gradient-to-r from-cyan-400 to-emerald-400 flex items-center justify-center shadow-lg"
-            animate={{
-              scale: [1, 1.2, 1],
-            }}
-            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-          >
-            <Lightbulb className="w-3 h-3 text-white" />
-          </motion.div>
-        </div>
-
-        <motion.h2
-          className="text-2xl md:text-3xl font-bold text-slate-50"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-        >
-          How can I help you{' '}
-          <span className="gradient-text-vivid">today?</span>
-        </motion.h2>
-        <motion.p
-          className="text-slate-400 text-sm md:text-base max-w-sm"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.45, duration: 0.5 }}
-        >
-          Ask a question and I&apos;ll search your documents to find the answer.
-        </motion.p>
-      </motion.div>
-
-      {/* Suggestion chips with stagger */}
-      <motion.div
-        className="grid grid-cols-1 gap-3 pt-2"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        {suggestions.map((text, i) => {
-          const Icon = suggestionIcons[i];
-          return (
-            <motion.button
-              key={i}
-              variants={itemVariants}
-              onClick={() => handleSendMessage(text)}
-              className="group relative p-4 rounded-xl glass border border-slate-700/50 text-slate-300 text-sm text-left flex items-center gap-3 transition-all duration-300 hover:border-cyan-500/40 hover:text-white"
-              whileHover={{ scale: 1.02, y: -2 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              {/* Hover glow */}
-              <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-cyan-500/5 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <div className="relative shrink-0 w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-500/15 to-emerald-500/15 border border-cyan-500/20 flex items-center justify-center group-hover:border-cyan-500/40 transition-colors duration-300">
-                <Icon className="w-4 h-4 text-cyan-400" />
-              </div>
-              <span className="relative">{text}</span>
-            </motion.button>
-          );
-        })}
-      </motion.div>
+const MessageBubble = ({ message, isBot }: { message: string, isBot: boolean }) => (
+  <motion.div 
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    className={`flex w-full ${isBot ? 'justify-start' : 'justify-end'} mb-6`}
+  >
+    <div className={`flex max-w-[80%] ${isBot ? 'flex-row' : 'flex-row-reverse'} items-end gap-3`}>
+      <div className={`w-8 h-8 rounded-full border border-white/10 shrink-0 flex items-center justify-center ${isBot ? 'bg-indigo-600 text-white' : 'bg-white text-black'}`}>
+        {isBot ? <Bot className="w-4 h-4" /> : <User className="w-4 h-4" />}
+      </div>
+      
+      <div className={`px-5 py-3.5 rounded-2xl ${
+        isBot 
+          ? 'bg-white/5 border border-white/10 text-zinc-100 rounded-bl-none shadow-sm backdrop-blur-sm' 
+          : 'bg-indigo-600 text-white rounded-br-none shadow-md'
+      }`}>
+        <p className="text-[15px] leading-relaxed">{message}</p>
+      </div>
     </div>
-  );
+  </motion.div>
+);
+
+export default function ChatPage() {
+  const [messages, setMessages] = useState([
+    { id: 1, text: "Hello! I'm your AI assistant. I have access to all your uploaded documents. What would you like to know?", isBot: true }
+  ]);
+  const [input, setInput] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const handleSend = () => {
+    if (!input.trim()) return;
+    
+    setMessages(prev => [...prev, { id: Date.now(), text: input, isBot: false }]);
+    setInput("");
+    setIsTyping(true);
+    
+    setTimeout(() => {
+      setIsTyping(false);
+      setMessages(prev => [...prev, { 
+        id: Date.now() + 1, 
+        text: "Based on the Q2 Financial Report, revenue grew by 15% year-over-year. The main driver was the enterprise software division.", 
+        isBot: true 
+      }]);
+    }, 1500);
+  };
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      const scrollElement = scrollRef.current;
+      scrollElement.scrollTop = scrollElement.scrollHeight;
+    }
+  }, [messages, isTyping]);
 
   return (
-    <motion.div
-      className="h-[calc(100vh-8rem)]"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.4 }}
-    >
-      <ChatWindow
-        messages={[]}
-        isLoading={isSending}
-        onSendMessage={handleSendMessage}
-        emptyStateContent={emptyState}
-      />
-    </motion.div>
+    <div className="h-[calc(100vh-8rem)] flex flex-col items-center justify-center p-4 animate-in fade-in duration-500">
+      <Card className="glass-card bg-white/5 w-full max-w-4xl h-full flex flex-col overflow-hidden border-white/10">
+        <div className="p-4 border-b border-white/10 flex items-center justify-between bg-black/20">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center">
+              <Sparkles className="w-5 h-5 text-indigo-400" />
+            </div>
+            <div>
+              <h2 className="font-semibold text-white">AI Assistant</h2>
+              <p className="text-xs text-emerald-400 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 block animate-pulse"></span> Online
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-6 scroll-smooth" ref={scrollRef}>
+          {messages.map(msg => (
+            <MessageBubble key={msg.id} message={msg.text} isBot={msg.isBot} />
+          ))}
+          {isTyping && (
+            <div className="flex w-full justify-start mb-6">
+              <div className="flex max-w-[80%] flex-row items-end gap-3">
+                <div className="w-8 h-8 rounded-full border border-white/10 shrink-0 flex items-center justify-center bg-indigo-600 text-white">
+                  <Bot className="w-4 h-4" />
+                </div>
+                <div className="px-5 py-4 rounded-2xl bg-white/5 border border-white/10 rounded-bl-none backdrop-blur-sm">
+                  <TypingIndicator />
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="p-4 bg-black/20 border-t border-white/10">
+          <form 
+            onSubmit={(e) => { e.preventDefault(); handleSend(); }}
+            className="relative flex items-center"
+          >
+            <Input 
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Ask anything about your documents..." 
+              className="w-full pl-4 pr-14 py-6 bg-white/5 border-white/10 text-white rounded-2xl focus-visible:ring-1 focus-visible:ring-indigo-500 placeholder:text-zinc-500 text-base shadow-inner"
+            />
+            <Button 
+              type="submit" 
+              size="icon"
+              disabled={!input.trim()} 
+              className="absolute right-2 w-10 h-10 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white disabled:opacity-50 transition-all"
+            >
+              <CornerDownLeft className="w-4 h-4" />
+            </Button>
+          </form>
+          <p className="text-center text-[11px] text-zinc-500 mt-3">
+            AI can make mistakes. Verify important information from source documents.
+          </p>
+        </div>
+      </Card>
+    </div>
   );
 }

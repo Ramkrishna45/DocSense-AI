@@ -35,6 +35,9 @@ export function formatRelativeTime(dateString: string): string {
   return `${diffMonths}mo ago`;
 }
 
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
 export function getFileIcon(filename: string): string {
   const ext = filename.split('.').pop()?.toLowerCase() || '';
   const iconMap: Record<string, string> = {
@@ -95,6 +98,6 @@ export function truncateText(text: string, maxLength: number): string {
   return text.slice(0, maxLength).trimEnd() + '…';
 }
 
-export function cn(...classes: (string | boolean | undefined | null)[]): string {
-  return classes.filter(Boolean).join(' ');
+export function cn(...inputs: (ClassValue | ((...args: any[]) => any))[]) {
+  return twMerge(clsx(inputs as ClassValue[]))
 }

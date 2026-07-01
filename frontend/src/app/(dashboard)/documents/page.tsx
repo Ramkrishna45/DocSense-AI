@@ -1,155 +1,85 @@
-'use client';
-
-import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { FileText, Search, Upload, FolderOpen } from 'lucide-react';
-import { apiFetch } from '@/lib/api';
-import { Document } from '@/types';
-import DocumentCard from '@/components/documents/DocumentCard';
-import Button from '@/components/ui/Button';
-import Spinner from '@/components/ui/Spinner';
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { FileText, Search, Filter, MoreVertical, Clock, Database, ChevronRight } from "lucide-react";
 import Link from 'next/link';
 
+// Custom DocumentCard component
+const DocumentCard = ({ title, size, date, status, id }: any) => (
+  <Link href={`/documents/${id}`}>
+    <Card className="glass-card bg-white/5 border-white/10 group hover:border-indigo-500/50 transition-all duration-300 cursor-pointer overflow-hidden relative">
+      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+      <CardHeader className="p-5 pb-0 flex flex-row items-start justify-between relative z-10">
+        <div className="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center shadow-inner">
+          <FileText className="w-6 h-6 text-indigo-400" />
+        </div>
+        <Button size="icon" variant="ghost" className="h-8 w-8 text-zinc-400 hover:text-white hover:bg-white/10 rounded-full">
+          <MoreVertical className="w-4 h-4" />
+        </Button>
+      </CardHeader>
+      <CardContent className="p-5 relative z-10 mt-2">
+        <h3 className="font-semibold text-lg text-white mb-1 line-clamp-1 group-hover:text-indigo-300 transition-colors">{title}</h3>
+        <div className="flex flex-col gap-2 mt-4">
+          <div className="flex items-center gap-2 text-sm text-zinc-400">
+            <Database className="w-3.5 h-3.5" />
+            <span>{size}</span>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-zinc-400">
+            <Clock className="w-3.5 h-3.5" />
+            <span>{date}</span>
+          </div>
+        </div>
+        <div className="flex items-center justify-between mt-6">
+          <span className={`px-3 py-1 text-xs rounded-full border ${status === 'Processed' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 'bg-amber-500/20 text-amber-400 border-amber-500/30'}`}>
+            {status}
+          </span>
+          <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white text-zinc-400 transition-all">
+            <ChevronRight className="w-4 h-4" />
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  </Link>
+);
+
 export default function DocumentsPage() {
-  const [documents, setDocuments] = useState<Document[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const fetchDocuments = async () => {
-    setIsLoading(true);
-    try {
-      const res = await apiFetch('/api/documents');
-      setDocuments(res.documents || []);
-    } catch (error) {
-      console.error('Failed to fetch documents:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleDelete = async (id: string) => {
-    try {
-      await apiFetch(`/api/documents/${id}`, { method: 'DELETE' });
-      await fetchDocuments();
-    } catch (error) {
-      console.error('Failed to delete document:', error);
-    }
-  };
-
-  const handleRename = async (id: string, newTitle: string) => {
-    try {
-      await apiFetch(`/api/documents/${id}/rename`, {
-        method: 'PATCH',
-        body: JSON.stringify({ title: newTitle })
-      });
-      await fetchDocuments();
-    } catch (error) {
-      console.error('Failed to rename document:', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchDocuments();
-  }, []);
-
-  const filteredDocs = documents.filter(doc => 
-    doc.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    doc.original_filename.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const documents = [
+    { id: 1, title: 'Company_Overview_2024.pdf', size: '3.2 MB', date: 'Oct 24, 2024', status: 'Processed' },
+    { id: 2, title: 'Q3_Financials_Draft.docx', size: '1.1 MB', date: 'Oct 22, 2024', status: 'Processing' },
+    { id: 3, title: 'Employee_Handbook_v2.pdf', size: '8.4 MB', date: 'Oct 15, 2024', status: 'Processed' },
+    { id: 4, title: 'Marketing_Assets_List.pdf', size: '0.9 MB', date: 'Oct 12, 2024', status: 'Processed' },
+    { id: 5, title: 'Product_Roadmap_Q4.pdf', size: '5.5 MB', date: 'Oct 10, 2024', status: 'Processed' },
+    { id: 6, title: 'API_Documentation.pdf', size: '2.3 MB', date: 'Oct 05, 2024', status: 'Processing' },
+  ];
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
-      >
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500/20 to-emerald-500/20 border border-cyan-500/20 flex items-center justify-center">
-            <FolderOpen className="w-5 h-5 text-cyan-400" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Document Library</h1>
-            <p className="text-[var(--text-secondary)] text-sm">Manage your uploaded knowledge</p>
-          </div>
+    <div className="space-y-8 p-8 animate-in fade-in duration-500">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h1 className="text-4xl font-bold tracking-tight text-white mb-2">Document Library</h1>
+          <p className="text-zinc-400">Manage and browse your uploaded knowledge base documents.</p>
         </div>
-        <Link href="/upload">
-          <Button variant="primary">
-            <Upload className="w-4 h-4 mr-2" />
-            Upload Document
+        
+        <div className="flex items-center gap-3 w-full md:w-auto">
+          <div className="relative w-full md:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+            <Input 
+              placeholder="Search documents..." 
+              className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-zinc-500 focus-visible:ring-indigo-500"
+            />
+          </div>
+          <Button variant="outline" size="icon" className="border-white/10 bg-white/5 text-zinc-300 hover:bg-white/10 hover:text-white shrink-0">
+            <Filter className="w-4 h-4" />
           </Button>
-        </Link>
-      </motion.div>
-
-      {/* Search */}
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.05 }}
-        className="w-full max-w-md"
-      >
-        <div className="relative group">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)] group-focus-within:text-cyan-400 transition-colors" />
-          <input
-            placeholder="Search documents..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-[var(--surface-2)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] border border-[var(--glass-border)] rounded-xl py-2.5 pl-11 pr-4 text-sm focus:outline-none focus:border-cyan-500/40 focus:ring-2 focus:ring-cyan-500/10 hover:border-[var(--glass-border-hover)] transition-all duration-200"
-          />
         </div>
-      </motion.div>
+      </div>
 
-      {/* Content */}
-      {isLoading ? (
-        <div className="flex justify-center p-16">
-          <Spinner size="lg" />
-        </div>
-      ) : filteredDocs.length > 0 ? (
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={{
-            hidden: {},
-            visible: { transition: { staggerChildren: 0.05 } }
-          }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
-        >
-          {filteredDocs.map(doc => (
-            <motion.div
-              key={doc.id}
-              variants={{
-                hidden: { opacity: 0, y: 16 },
-                visible: { opacity: 1, y: 0 }
-              }}
-            >
-              <DocumentCard document={doc} onDelete={handleDelete} onRename={handleRename} />
-            </motion.div>
-          ))}
-        </motion.div>
-      ) : (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="text-center py-20 px-4 rounded-2xl glass border border-dashed border-[var(--glass-border)]"
-        >
-          <FileText className="w-12 h-12 text-[var(--text-muted)] mx-auto mb-4" />
-          <h3 className="text-xl font-medium text-[var(--text-primary)] mb-2">No documents found</h3>
-          <p className="text-[var(--text-secondary)] max-w-sm mx-auto mb-6">
-            {searchQuery 
-              ? "No documents match your search query."
-              : "Upload your first document to start building your personal knowledge engine."}
-          </p>
-          {!searchQuery && (
-            <Link href="/upload">
-              <Button variant="primary">
-                <Upload className="w-4 h-4 mr-2" />
-                Upload Now
-              </Button>
-            </Link>
-          )}
-        </motion.div>
-      )}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {documents.map((doc) => (
+          <DocumentCard key={doc.id} {...doc} />
+        ))}
+      </div>
     </div>
   );
 }
