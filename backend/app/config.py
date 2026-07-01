@@ -26,7 +26,7 @@ class Settings(BaseSettings):
 
     # Model Configuration
     EMBEDDING_MODEL: str = "sentence-transformers/all-MiniLM-L6-v2"
-    LLM_MODEL: str = "gemini-2.5-flash"
+    LLM_MODEL: str = "gemini-1.5-flash"
 
     model_config = {
         "env_file": ".env",
