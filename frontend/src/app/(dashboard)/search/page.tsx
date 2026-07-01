@@ -54,39 +54,10 @@ export default function SearchPage() {
 
       {hasSearched && !isSearching && (
         <div className="max-w-4xl mx-auto mt-12 space-y-6 animate-in slide-in-from-bottom-8 duration-500">
-          <div className="flex items-center justify-between text-sm text-zinc-400 pb-2 border-b border-white/10">
-            <span>Found 3 highly relevant snippets</span>
-            <span>Search took 0.42s</span>
+          <div className="py-12 text-center text-zinc-500 border border-white/5 border-dashed rounded-xl bg-white/5">
+            <SearchIcon className="w-10 h-10 mx-auto mb-3 opacity-20" />
+            <p>No results found for your query. (Backend not connected)</p>
           </div>
-
-          {[1, 2, 3].map((item) => (
-            <Card key={item} className="glass-card bg-white/5 border-white/10 hover:border-indigo-500/30 transition-all duration-300 group cursor-pointer">
-              <CardContent className="p-6">
-                <div className="flex items-start justify-between gap-4 mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-white/5">
-                      <FileText className="w-5 h-5 text-indigo-400" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-white group-hover:text-indigo-300 transition-colors">Q2_Financial_Report_2024.pdf</h4>
-                      <p className="text-xs text-zinc-500 mt-0.5">Page {item * 12}</p>
-                    </div>
-                  </div>
-                  <span className="border border-indigo-500/30 text-indigo-300 bg-indigo-500/10 px-2 py-1 rounded text-xs">
-                    9{8 - item}% match
-                  </span>
-                </div>
-                
-                <p className="text-zinc-300 text-sm leading-relaxed mb-4">
-                  ...the resulting increase in enterprise software adoption led to a <strong className="text-indigo-300 font-semibold bg-indigo-500/20 px-1 rounded">15% year-over-year revenue growth</strong>. This was significantly driven by our newly launched cloud products in the APAC region...
-                </p>
-                
-                <div className="flex items-center text-xs font-medium text-indigo-400 group-hover:text-indigo-300 transition-colors">
-                  View in Document <ChevronRight className="w-3 h-3 ml-1" />
-                </div>
-              </CardContent>
-            </Card>
-          ))}
         </div>
       )}
     </div>

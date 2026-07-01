@@ -44,14 +44,7 @@ const DocumentCard = ({ title, size, date, status, id }: { title: string; size: 
 );
 
 export default function DocumentsPage() {
-  const documents = [
-    { id: 1, title: 'Company_Overview_2024.pdf', size: '3.2 MB', date: 'Oct 24, 2024', status: 'Processed' },
-    { id: 2, title: 'Q3_Financials_Draft.docx', size: '1.1 MB', date: 'Oct 22, 2024', status: 'Processing' },
-    { id: 3, title: 'Employee_Handbook_v2.pdf', size: '8.4 MB', date: 'Oct 15, 2024', status: 'Processed' },
-    { id: 4, title: 'Marketing_Assets_List.pdf', size: '0.9 MB', date: 'Oct 12, 2024', status: 'Processed' },
-    { id: 5, title: 'Product_Roadmap_Q4.pdf', size: '5.5 MB', date: 'Oct 10, 2024', status: 'Processed' },
-    { id: 6, title: 'API_Documentation.pdf', size: '2.3 MB', date: 'Oct 05, 2024', status: 'Processing' },
-  ];
+  const documents: any[] = [];
 
   return (
     <div className="space-y-8 p-8 animate-in fade-in duration-500">
@@ -75,11 +68,18 @@ export default function DocumentsPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {documents.map((doc) => (
-          <DocumentCard key={doc.id} {...doc} />
-        ))}
-      </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {documents.length === 0 ? (
+            <div className="col-span-full py-12 text-center text-zinc-500 bg-white/5 rounded-xl border border-white/10 border-dashed">
+              <FileText className="w-12 h-12 mx-auto mb-3 opacity-20" />
+              <p>No documents uploaded yet.</p>
+            </div>
+          ) : (
+            documents.map((doc) => (
+              <DocumentCard key={doc.id} {...doc} />
+            ))
+          )}
+        </div>
     </div>
   );
 }

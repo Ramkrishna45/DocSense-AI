@@ -34,7 +34,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-6xl font-bold text-white tracking-tighter">
-              24,592
+              0
             </div>
             <p className="text-sm text-emerald-400 mt-2 flex items-center gap-1">
               <Activity className="w-4 h-4" />
@@ -54,7 +54,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-6xl font-bold text-white tracking-tighter">
-              142
+              0
             </div>
             <p className="text-sm text-emerald-400 mt-2 flex items-center gap-1">
               <Activity className="w-4 h-4" />
@@ -78,30 +78,9 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors group cursor-pointer">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-indigo-500/20 flex items-center justify-center">
-                      <FileText className="w-5 h-5 text-indigo-400" />
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-white group-hover:text-indigo-300 transition-colors">Q2_Financial_Report_2024.pdf</h4>
-                      <div className="flex items-center gap-3 text-sm text-zinc-500">
-                        <span className="flex items-center gap-1"><Database className="w-3 h-3" /> 2.4 MB</span>
-                        <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> 2 hours ago</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/20">
-                      Processed
-                    </span>
-                    <Button size="icon" variant="ghost" className="text-zinc-400 group-hover:text-white">
-                      <ArrowRight className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
+              <div className="py-8 text-center text-zinc-500 border border-white/5 border-dashed rounded-xl">
+                <p>No recent documents.</p>
+              </div>
             </div>
           </CardContent>
         </Card>

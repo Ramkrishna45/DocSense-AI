@@ -55,7 +55,7 @@ export default function ChatPage() {
       setIsTyping(false);
       setMessages(prev => [...prev, { 
         id: Date.now() + 1, 
-        text: "Based on the Q2 Financial Report, revenue grew by 15% year-over-year. The main driver was the enterprise software division.", 
+        text: "I am currently not connected to the backend API.", 
         isBot: true 
       }]);
     }, 1500);
