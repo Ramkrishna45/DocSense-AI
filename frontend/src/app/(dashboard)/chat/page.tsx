@@ -124,7 +124,7 @@ export default function ChatPage() {
     try {
       const [colData, docData] = await Promise.all([getCollections(), getDocuments()]);
       setCollections(colData);
-      setDocuments(docData.documents || []);
+      setDocuments(docData || []);
     } catch (error) {
       console.error("Failed to load context data", error);
     }
