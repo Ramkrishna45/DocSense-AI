@@ -86,9 +86,10 @@ export default function SearchPage() {
               <p>No results found for your query.</p>
             </div>
           ) : (
-            results.map((item, index) => (
-              <Link key={index} href={`/documents/${item.document_id}?page=${item.page_number || 1}`}>
-                <Card className="glass-card bg-white/5 border-white/10 hover:border-indigo-500/30 transition-all duration-300 group cursor-pointer">
+            results.map((item, index) => {
+              const href = item.document_id ? `/documents/${item.document_id}?page=${item.page_number || 1}` : '#';
+              const cardContent = (
+                <Card className={`glass-card bg-white/5 border-white/10 transition-all duration-300 group ${item.document_id ? 'hover:border-indigo-500/30 cursor-pointer' : 'opacity-80'}`}>
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between gap-4 mb-4">
                       <div className="flex items-center gap-3">
@@ -112,12 +113,26 @@ export default function SearchPage() {
                     </p>
                     
                     <div className="flex items-center text-xs font-medium text-indigo-400 group-hover:text-indigo-300 transition-colors">
-                      View in Document <ChevronRight className="w-3 h-3 ml-1" />
+                      {item.document_id ? (
+                        <>View in Document <ChevronRight className="w-3 h-3 ml-1" /></>
+                      ) : (
+                        <span className="text-zinc-500">ID resolving, please search again...</span>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
-              </Link>
-            ))
+              );
+
+              return item.document_id ? (
+                <Link key={index} href={href}>
+                  {cardContent}
+                </Link>
+              ) : (
+                <div key={index}>
+                  {cardContent}
+                </div>
+              );
+            })
           )}
         </div>
       )}
