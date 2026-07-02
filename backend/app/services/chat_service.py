@@ -300,6 +300,9 @@ async def process_chat(
             "match_type": source.get("match_type", "semantic")
         })
 
+    # Explicitly commit before returning so the frontend fetch is guaranteed to see it
+    await db.commit()
+
     return {
         "message": answer_data["answer"],
         "sources": sources_response,
