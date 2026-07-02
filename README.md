@@ -38,7 +38,7 @@ The system leverages **Retrieval-Augmented Generation (RAG)** to provide highly 
 Extend the power of DocSense AI directly into your browser with our companion Web Extension! 
 * **Seamless Ingestion:** Instantly save the current webpage, article, or selected text straight to your DocSense AI knowledge base with a single click.
 * **Contextual Search:** Highlight any text on a page to quickly run a semantic search against your private documents.
-* **Repository:** Check out the source code and installation instructions here: **[DocSense AI Web Extension on GitHub](https://github.com/Ramkrishna45/DocSense-AI-Extension)**
+* **Repository:** Check out the source code and installation instructions here: **[DocSense AI Companion on GitHub](https://github.com/Ramkrishna45/DocSense-Companion)**
 
 ## 🏗️ Architecture Diagram
 
