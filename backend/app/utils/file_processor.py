@@ -137,9 +137,9 @@ def process_source(source: str, source_type: str = 'file', original_filename: st
         original_filename: needed for file extraction to know extension
     """
     if source_type == 'youtube':
-        return extract_text_from_youtube(source)
+        pages = extract_text_from_youtube(source)
     elif source_type in ['url', 'github']:
-        return extract_text_from_url(source)
+        pages = extract_text_from_url(source)
     else:
         file_type = original_filename.split('.')[-1].lower() if original_filename else source.split('.')[-1].lower()
         extractors = {
@@ -151,4 +151,13 @@ def process_source(source: str, source_type: str = 'file', original_filename: st
         extractor = extractors.get(file_type)
         if not extractor:
             raise ValueError(f"Unsupported file type: {file_type}")
-        return extractor(source)
+        pages = extractor(source)
+
+    # Sanitize text to remove null bytes (\x00) which crash PostgreSQL
+    sanitized_pages = []
+    for page_num, text in pages:
+        if text:
+            sanitized_text = text.replace('\x00', '')
+            sanitized_pages.append((page_num, sanitized_text))
+            
+    return sanitized_pages
