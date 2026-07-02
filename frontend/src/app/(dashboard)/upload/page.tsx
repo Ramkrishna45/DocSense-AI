@@ -99,7 +99,7 @@ export default function UploadPage() {
         <p className="text-zinc-400 text-lg">Add files, websites, or repositories to your intelligent database.</p>
       </div>
 
-      <Tabs defaultValue="file" className="w-full" onValueChange={(v) => { setActiveTab(v); setSourceUrl(""); }}>
+      <Tabs defaultValue="file" className="w-full flex flex-col" onValueChange={(v) => { setActiveTab(v); setSourceUrl(""); }}>
         <TabsList className="grid w-full grid-cols-4 bg-white/5 border border-white/10 mb-8 h-12">
           <TabsTrigger value="file" className="data-[state=active]:bg-indigo-500/20 data-[state=active]:text-indigo-300 transition-all">
             <UploadCloud className="w-4 h-4 mr-2" /> Documents
