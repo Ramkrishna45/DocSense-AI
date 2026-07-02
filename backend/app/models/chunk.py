@@ -20,7 +20,7 @@ class Chunk(Base):
         content: Raw text content of the chunk.
         embedding: 384-dimensional vector from all-MiniLM-L6-v2.
     """
-    __tablename__ = "document_chunks_v3"
+    __tablename__ = "document_chunks_v4"
 
     id: Mapped[uuid.UUID] = mapped_column(
         primary_key=True,
