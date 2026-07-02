@@ -55,6 +55,7 @@ export interface SourceInfo {
 }
 
 export interface SearchResult {
+  document_id: string;
   document_title: string;
   page_number: number | null;
   chunk_number: number;

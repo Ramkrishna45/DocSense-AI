@@ -43,6 +43,7 @@ async def semantic_search(
             chunk = result["chunk"]
             document = result["document"]
             results.append(SearchResult(
+                document_id=str(document.id) if document else "",
                 document_title=document.title if document else "Unknown",
                 page_number=chunk.page_number,
                 chunk_number=chunk.chunk_number,

@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -86,34 +87,36 @@ export default function SearchPage() {
             </div>
           ) : (
             results.map((item, index) => (
-              <Card key={index} className="glass-card bg-white/5 border-white/10 hover:border-indigo-500/30 transition-all duration-300 group cursor-pointer">
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between gap-4 mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg bg-white/5">
-                        <FileText className="w-5 h-5 text-indigo-400" />
+              <Link key={index} href={`/documents/${item.document_id}?page=${item.page_number || 1}`}>
+                <Card className="glass-card bg-white/5 border-white/10 hover:border-indigo-500/30 transition-all duration-300 group cursor-pointer">
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between gap-4 mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-white/5">
+                          <FileText className="w-5 h-5 text-indigo-400" />
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-white group-hover:text-indigo-300 transition-colors">{item.document_title}</h4>
+                          <p className="text-xs text-zinc-500 mt-0.5">
+                            {item.page_number !== null ? `Page ${item.page_number}` : `Chunk ${item.chunk_number}`}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <h4 className="font-semibold text-white group-hover:text-indigo-300 transition-colors">{item.document_title}</h4>
-                        <p className="text-xs text-zinc-500 mt-0.5">
-                          {item.page_number !== null ? `Page ${item.page_number}` : `Chunk ${item.chunk_number}`}
-                        </p>
-                      </div>
+                      <span className="border border-indigo-500/30 text-indigo-300 bg-indigo-500/10 px-2 py-1 rounded text-xs">
+                        {((item.similarity_score || 0) * 100).toFixed(1)}% match
+                      </span>
                     </div>
-                    <span className="border border-indigo-500/30 text-indigo-300 bg-indigo-500/10 px-2 py-1 rounded text-xs">
-                      {((item.similarity_score || 0) * 100).toFixed(1)}% match
-                    </span>
-                  </div>
-                  
-                  <p className="text-zinc-300 text-sm leading-relaxed mb-4">
-                    {item.content}
-                  </p>
-                  
-                  <div className="flex items-center text-xs font-medium text-indigo-400 group-hover:text-indigo-300 transition-colors">
-                    View in Document <ChevronRight className="w-3 h-3 ml-1" />
-                  </div>
-                </CardContent>
-              </Card>
+                    
+                    <p className="text-zinc-300 text-sm leading-relaxed mb-4">
+                      {item.content}
+                    </p>
+                    
+                    <div className="flex items-center text-xs font-medium text-indigo-400 group-hover:text-indigo-300 transition-colors">
+                      View in Document <ChevronRight className="w-3 h-3 ml-1" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
             ))
           )}
         </div>
