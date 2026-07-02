@@ -40,11 +40,11 @@ async def list_conversations(
     # Convert to response schema
     return [
         ConversationResponse(
-            id=c.id,
-            title=c.title,
-            created_at=c.created_at,
-            updated_at=c.updated_at,
-            message_count=len(c.messages) if hasattr(c, 'messages') else 0
+            id=c["id"],
+            title=c["title"],
+            created_at=c["created_at"],
+            updated_at=c["updated_at"],
+            message_count=c["message_count"]
         ) for c in conversations
     ]
 
