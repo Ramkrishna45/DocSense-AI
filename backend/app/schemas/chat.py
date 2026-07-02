@@ -22,6 +22,7 @@ class ChatRequest(BaseModel):
 class SourceInfo(BaseModel):
     """Schema for a source reference in chat responses."""
 
+    document_id: str
     document_title: str
     page_number: int | None = None
     chunk_number: int
