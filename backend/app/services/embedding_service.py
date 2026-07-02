@@ -46,13 +46,13 @@ class EmbeddingService:
         if self._model is not None:
             return
 
-        logger.info("Loading embedding model using Voyage AI")
+        logger.info("Loading embedding model using Cohere")
         try:
-            from langchain_voyageai import VoyageAIEmbeddings
+            from langchain_cohere import CohereEmbeddings
 
-            self._model = VoyageAIEmbeddings(
+            self._model = CohereEmbeddings(
                 model=settings.EMBEDDING_MODEL,
-                voyage_api_key=settings.VOYAGE_API_KEY,
+                cohere_api_key=settings.COHERE_API_KEY,
             )
             logger.info("Embedding model loaded successfully")
         except Exception as e:

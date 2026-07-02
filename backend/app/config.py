@@ -26,7 +26,7 @@ class Settings(BaseSettings):
     MAX_FILE_SIZE: int = 52428800  # 50 MB
 
     # Model Configuration
-    EMBEDDING_MODEL: str = "voyage-3"
+    EMBEDDING_MODEL: str = "embed-english-v3.0"
     LLM_MODEL: str = "command-r-08-2024"
 
     model_config = {
