@@ -26,7 +26,7 @@ class Settings(BaseSettings):
     MAX_FILE_SIZE: int = 52428800  # 50 MB
 
     # Model Configuration
-    EMBEDDING_MODEL: str = "voyage-2"
+    EMBEDDING_MODEL: str = "voyage-3"
     LLM_MODEL: str = "command-r"
 
     model_config = {
