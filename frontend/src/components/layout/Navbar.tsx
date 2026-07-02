@@ -7,7 +7,6 @@ import { useAuth } from '@/lib/auth';
 import { useRouter } from 'next/navigation';
 
 export default function Navbar() {
-  const { user, logout } = useAuth();
   const { user } = useAuth();
   const router = useRouter();
 
