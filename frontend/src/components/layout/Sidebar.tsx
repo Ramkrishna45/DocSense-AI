@@ -20,8 +20,8 @@ export default function Sidebar() {
 
   return (
     <aside className="w-64 hidden md:flex flex-col h-full border-r border-border/50 glass">
-      <div className="p-6 flex items-center justify-center h-24">
-        <img src="/trans-logo.svg" alt="DocSense Logo" className="h-full w-auto object-contain" />
+      <div className="px-4 py-6 flex items-center justify-center">
+        <img src="/trans-logo.svg" alt="DocSense Logo" className="w-full h-auto object-contain" />
       </div>
 
       <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto">

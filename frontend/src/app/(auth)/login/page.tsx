@@ -53,10 +53,10 @@ export default function LoginPage() {
       className="glass-card rounded-2xl p-8 shadow-2xl border border-white/10 dark:border-white/5 backdrop-blur-xl bg-white/50 dark:bg-black/50"
     >
       <div className="mb-6 text-center flex flex-col items-center">
-        <div className="w-full h-24 flex items-center justify-center mb-6">
-          <img src="/trans-logo.svg" alt="DocSense Logo" className="h-full w-auto object-contain" />
+        <div className="w-full flex items-center justify-center mb-6 mt-2">
+          <img src="/trans-logo.svg" alt="DocSense Logo" className="w-[85%] h-auto object-contain" />
         </div>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground mb-2 mt-2">Welcome Back</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground mb-2">Welcome Back</h1>
         <p className="text-muted-foreground text-sm">Enter your credentials to access your account</p>
       </div>
 
