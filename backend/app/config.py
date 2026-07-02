@@ -27,7 +27,7 @@ class Settings(BaseSettings):
 
     # Model Configuration
     EMBEDDING_MODEL: str = "voyage-3"
-    LLM_MODEL: str = "command-r"
+    LLM_MODEL: str = "command-r-08-2024"
 
     model_config = {
         "env_file": ".env",

@@ -193,8 +193,14 @@ async def process_document(
 
         except Exception as e:
             logger.error(f"Failed to process document {document_id}: {e}", exc_info=True)
-            document.status = "failed"
-            await db.commit()
+            await db.rollback()
+            
+            # Fetch document again after rollback to mark as failed
+            result = await db.execute(select(Document).where(Document.id == document_id))
+            fail_doc = result.scalar_one_or_none()
+            if fail_doc:
+                fail_doc.status = "failed"
+                await db.commit()
 
 async def get_user_documents(db: AsyncSession, user_id: uuid.UUID) -> list[Document]:
     result = await db.execute(
