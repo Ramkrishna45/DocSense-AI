@@ -1,7 +1,8 @@
 "use client";
 
 import React from 'react';
-import { Bell, Search, Menu, LogOut, User as UserIcon, Settings } from 'lucide-react';
+import Link from 'next/link';
+import { Bell, Search, Menu, LogOut, User as UserIcon } from 'lucide-react';
 // Assume standard shadcn UI imports
 import {
   DropdownMenu,
@@ -58,13 +59,9 @@ export default function Navbar() {
           <DropdownMenuContent align="end" className="w-56 glass-card border-border/50">
             <DropdownMenuLabel>{user?.name || 'My Account'}</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer flex items-center">
+            <DropdownMenuItem onClick={() => router.push('/profile')} className="cursor-pointer flex items-center">
               <UserIcon className="mr-2 h-4 w-4" />
               <span>Profile</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer flex items-center">
-              <Settings className="mr-2 h-4 w-4" />
-              <span>Settings</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout} className="cursor-pointer flex items-center text-destructive focus:text-destructive">
