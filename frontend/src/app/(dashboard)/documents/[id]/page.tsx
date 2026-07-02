@@ -86,31 +86,37 @@ export default function DocumentDetailPage() {
   const isCompleted = doc.status === 'completed';
   return (
     <div className="max-w-5xl mx-auto space-y-8 p-8 animate-in slide-in-from-bottom-4 duration-500">
-      <div className="flex items-center gap-4">
-        <Link href="/documents">
-          <Button variant="ghost" size="icon" className="text-zinc-400 hover:text-white hover:bg-white/10 rounded-full">
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-        </Link>
-        <div className="flex-1">
-          <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold text-white tracking-tight">{doc.title}</h1>
-            <span className={`px-2 py-1 text-xs rounded-full border ${
-              isCompleted ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 
-              doc.status === 'failed' ? 'bg-red-500/20 text-red-400 border-red-500/30' :
-              'bg-amber-500/20 text-amber-400 border-amber-500/30'
-            }`}>
-              {doc.status.charAt(0).toUpperCase() + doc.status.slice(1)}
-            </span>
+      <div className="flex flex-col sm:flex-row sm:items-start md:items-center gap-4 md:gap-6">
+        <div className="flex items-start gap-4 w-full md:w-auto flex-1 min-w-0">
+          <Link href="/documents" className="shrink-0 mt-1 md:mt-0">
+            <Button variant="ghost" size="icon" className="text-zinc-400 hover:text-white hover:bg-white/10 rounded-full">
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+          </Link>
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-col xl:flex-row xl:items-center gap-2 xl:gap-4">
+              <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight truncate sm:whitespace-normal break-words" title={doc.title}>
+                {doc.title}
+              </h1>
+              <span className={`w-fit shrink-0 px-2 py-1 text-xs rounded-full border ${
+                isCompleted ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 
+                doc.status === 'failed' ? 'bg-red-500/20 text-red-400 border-red-500/30' :
+                'bg-amber-500/20 text-amber-400 border-amber-500/30'
+              }`}>
+                {doc.status.charAt(0).toUpperCase() + doc.status.slice(1)}
+              </span>
+            </div>
+            <p className="text-zinc-400 mt-2 text-xs md:text-sm break-all">ID: {doc.id}</p>
           </div>
-          <p className="text-zinc-400 mt-1">ID: {doc.id}</p>
         </div>
-        <div className="flex gap-3">
-          <Button onClick={handleDownload} disabled={isDownloading || !isCompleted} variant="outline" className="border-white/10 bg-white/5 text-zinc-300 hover:bg-white/10 hover:text-white">
-            {isDownloading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />} Download
+        <div className="flex w-full sm:w-auto gap-3 shrink-0">
+          <Button onClick={handleDownload} disabled={isDownloading || !isCompleted} variant="outline" className="flex-1 sm:flex-auto border-white/10 bg-white/5 text-zinc-300 hover:bg-white/10 hover:text-white">
+            {isDownloading ? <Loader2 className="w-4 h-4 sm:mr-2 animate-spin" /> : <Download className="w-4 h-4 sm:mr-2" />} 
+            <span className="hidden sm:inline">Download</span>
           </Button>
-          <Button onClick={handleDelete} disabled={isDeleting} variant="destructive" className="bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/30">
-            {isDeleting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Trash2 className="w-4 h-4 mr-2" />} Delete
+          <Button onClick={handleDelete} disabled={isDeleting} variant="destructive" className="flex-1 sm:flex-auto bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/30">
+            {isDeleting ? <Loader2 className="w-4 h-4 sm:mr-2 animate-spin" /> : <Trash2 className="w-4 h-4 sm:mr-2" />} 
+            <span className="hidden sm:inline">Delete</span>
           </Button>
         </div>
       </div>

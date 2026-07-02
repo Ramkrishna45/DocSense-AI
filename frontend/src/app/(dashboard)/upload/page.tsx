@@ -116,92 +116,98 @@ export default function UploadPage() {
         </TabsList>
 
         <TabsContent value="file" className="space-y-4">
-          <Card 
-            className={`glass-card bg-white/5 border-2 border-dashed transition-all duration-300 relative overflow-hidden ${
-              isDragging ? 'border-indigo-500 bg-indigo-500/10' : 'border-white/20 hover:border-white/40'
-            }`}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-          >
-            <CardContent className="flex flex-col items-center justify-center py-24 text-center">
-              <div className="w-20 h-20 mb-6 rounded-full bg-white/5 flex items-center justify-center relative">
-                <div className="absolute inset-0 bg-indigo-500/20 rounded-full animate-ping opacity-20" />
-                <UploadCloud className={`w-10 h-10 ${isDragging ? 'text-indigo-400' : 'text-zinc-400'}`} />
-              </div>
-              <h3 className="text-xl font-semibold text-white mb-2">Drag & Drop files here</h3>
-              <p className="text-zinc-400 mb-8 max-w-sm">Support for PDF, DOCX up to 50MB. Files will be automatically processed and chunked.</p>
-              <div className="relative">
-                <input 
-                  type="file" 
-                  multiple 
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                  onChange={(e) => e.target.files && setFiles(Array.from(e.target.files))}
-                  accept=".pdf,.docx,.txt,.md"
-                />
-                <Button size="lg" className="bg-white text-black hover:bg-zinc-200 px-8 relative pointer-events-none">
-                  Browse Files
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          <AnimatePresence>
-            {files.length > 0 && (
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="space-y-4 pt-4"
-              >
-                <div className="flex items-center justify-between">
-                  <h4 className="text-lg font-medium text-white">Selected Files ({files.length})</h4>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={() => setFiles([])}
-                    className="text-zinc-400 hover:text-white"
-                  >
-                    Clear all
+          <div className={`grid gap-6 ${files.length > 0 ? 'lg:grid-cols-2' : 'grid-cols-1'}`}>
+            <Card 
+              className={`glass-card bg-white/5 border-2 border-dashed transition-all duration-300 relative overflow-hidden h-full min-h-[300px] ${
+                isDragging ? 'border-indigo-500 bg-indigo-500/10' : 'border-white/20 hover:border-white/40'
+              }`}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+            >
+              <CardContent className="flex flex-col items-center justify-center h-full py-12 text-center">
+                <div className="w-20 h-20 mb-6 rounded-full bg-white/5 flex items-center justify-center relative">
+                  <div className="absolute inset-0 bg-indigo-500/20 rounded-full animate-ping opacity-20" />
+                  <UploadCloud className={`w-10 h-10 ${isDragging ? 'text-indigo-400' : 'text-zinc-400'}`} />
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-2">Drag & Drop files here</h3>
+                <p className="text-zinc-400 mb-8 max-w-sm px-4">Support for PDF, DOCX, TXT, MD up to 50MB. Files will be automatically processed.</p>
+                <div className="relative">
+                  <input 
+                    type="file" 
+                    multiple 
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    onChange={(e) => e.target.files && setFiles(Array.from(e.target.files))}
+                    accept=".pdf,.docx,.txt,.md"
+                  />
+                  <Button size="lg" className="bg-white text-black hover:bg-zinc-200 px-8 relative pointer-events-none">
+                    Browse Files
                   </Button>
                 </div>
-                
-                <div className="grid gap-3">
-                  {files.map((file, i) => (
-                    <div key={i} className="flex items-center justify-between p-4 rounded-xl glass-card border border-white/10 bg-white/5">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-lg bg-indigo-500/20 flex items-center justify-center">
-                          <File className="w-5 h-5 text-indigo-400" />
-                        </div>
-                        <div>
-                          <p className="text-white font-medium">{file.name}</p>
-                          <p className="text-sm text-zinc-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
-                        </div>
+              </CardContent>
+            </Card>
+
+            <AnimatePresence>
+              {files.length > 0 && (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="flex flex-col space-y-4 h-full"
+                >
+                  <Card className="glass-card bg-white/5 border border-white/10 flex-1 flex flex-col overflow-hidden">
+                    <CardContent className="p-6 flex flex-col h-full">
+                      <div className="flex items-center justify-between mb-4">
+                        <h4 className="text-lg font-medium text-white">Selected Files ({files.length})</h4>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={() => setFiles([])}
+                          className="text-zinc-400 hover:text-white"
+                        >
+                          Clear all
+                        </Button>
                       </div>
-                      <Button variant="ghost" size="icon" onClick={() => setFiles(files.filter((_, index) => index !== i))} className="text-zinc-500 hover:text-red-400">
-                        <X className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
+                      
+                      <div className="grid gap-3 overflow-y-auto flex-1 pr-2 max-h-[300px]">
+                        {files.map((file, i) => (
+                          <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10 shrink-0">
+                            <div className="flex items-center gap-3 overflow-hidden">
+                              <div className="w-10 h-10 rounded-lg bg-indigo-500/20 flex items-center justify-center shrink-0">
+                                <File className="w-5 h-5 text-indigo-400" />
+                              </div>
+                              <div className="overflow-hidden">
+                                <p className="text-white font-medium truncate">{file.name}</p>
+                                <p className="text-sm text-zinc-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                              </div>
+                            </div>
+                            <Button variant="ghost" size="icon" onClick={() => setFiles(files.filter((_, index) => index !== i))} className="text-zinc-500 hover:text-red-400 shrink-0">
+                              <X className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
 
-                <div className="flex justify-end pt-4">
-                  <Button 
-                    size="lg" 
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white min-w-[150px]"
-                    onClick={handleFileUpload}
-                    disabled={isUploading}
-                  >
-                    {isUploading ? (
-                      <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Uploading...</>
-                    ) : (
-                      <><FileCheck2 className="w-5 h-5 mr-2" /> Start Processing</>
-                    )}
-                  </Button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                      <div className="pt-6 mt-auto">
+                        <Button 
+                          size="lg" 
+                          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
+                          onClick={handleFileUpload}
+                          disabled={isUploading}
+                        >
+                          {isUploading ? (
+                            <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Processing...</>
+                          ) : (
+                            <><FileCheck2 className="w-5 h-5 mr-2" /> Start Processing {files.length} {files.length === 1 ? 'file' : 'files'}</>
+                          )}
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </TabsContent>
 
         {['url', 'youtube', 'github'].map((tab) => (
