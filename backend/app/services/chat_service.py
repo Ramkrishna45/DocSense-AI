@@ -219,6 +219,7 @@ async def process_chat(
     conversation_id: uuid.UUID | None = None,
     search_mode: str = "semantic",
     collection_id: uuid.UUID | None = None,
+    document_ids: list[uuid.UUID] | None = None,
 ) -> dict:
     """Process a chat message through the full RAG pipeline.
 
@@ -271,7 +272,7 @@ async def process_chat(
 
     # Step 4: Search for similar chunks
     search_results = await rag_service.search_chunks(
-        db, user_id, message, query_embedding, limit=5, search_mode=search_mode, collection_id=collection_id
+        db, user_id, message, query_embedding, limit=5, search_mode=search_mode, collection_id=collection_id, document_ids=document_ids
     )
 
     # Step 5: Generate answer

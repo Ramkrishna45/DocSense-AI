@@ -16,6 +16,7 @@ class ChatRequest(BaseModel):
     )
     search_mode: str = Field("semantic", description="Search mode to use")
     collection_id: uuid.UUID | None = Field(None, description="Optional collection ID")
+    document_ids: list[uuid.UUID] | None = Field(None, description="Optional list of document IDs to filter by")
 
 
 class SourceInfo(BaseModel):

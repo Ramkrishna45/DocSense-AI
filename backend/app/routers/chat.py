@@ -23,7 +23,8 @@ async def process_chat_message(
             chat_request.message, 
             chat_request.conversation_id,
             chat_request.search_mode,
-            chat_request.collection_id
+            chat_request.collection_id,
+            chat_request.document_ids
         )
         return response
     except ValueError as e:

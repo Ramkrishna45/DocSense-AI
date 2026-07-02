@@ -36,7 +36,8 @@ class RAGService:
         query_embedding: list[float] = None,
         limit: int = 5,
         search_mode: str = "semantic",
-        collection_id: Optional[uuid.UUID] = None
+        collection_id: Optional[uuid.UUID] = None,
+        document_ids: Optional[list[uuid.UUID]] = None
     ) -> list[dict]:
         """Search for document chunks using semantic, keyword, or hybrid mode."""
         
@@ -55,6 +56,10 @@ class RAGService:
             base_query = base_query.join(
                 document_collections, Document.id == document_collections.c.document_id
             ).where(document_collections.c.collection_id == collection_id)
+            
+        # Filter by specific documents if provided
+        if document_ids:
+            base_query = base_query.where(Document.id.in_(document_ids))
             
         results = []
         

@@ -164,12 +164,16 @@ export async function getStats(): Promise<UserStats> {
 export async function sendChatMessage(
   message: string,
   conversationId?: string,
+  collectionId?: string | null,
+  documentIds?: string[] | null,
 ): Promise<{ message: string; sources: SourceInfo[]; conversation_id: string; confidence?: number }> {
   return apiFetch('/api/chat', {
     method: 'POST',
     body: JSON.stringify({
       message,
       conversation_id: conversationId || null,
+      collection_id: collectionId || null,
+      document_ids: documentIds?.length ? documentIds : null,
     }),
   });
 }
