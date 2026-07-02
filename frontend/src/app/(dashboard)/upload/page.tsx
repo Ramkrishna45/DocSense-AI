@@ -153,10 +153,10 @@ export default function UploadPage() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className="flex flex-col space-y-4 h-full"
+                  className="flex flex-col space-y-4 h-fit"
                 >
-                  <Card className="glass-card bg-white/5 border border-white/10 flex-1 flex flex-col overflow-hidden">
-                    <CardContent className="p-6 flex flex-col h-full">
+                  <Card className="glass-card bg-white/5 border border-white/10 flex flex-col overflow-hidden h-fit">
+                    <CardContent className="p-6 flex flex-col">
                       <div className="flex items-center justify-between mb-4">
                         <h4 className="text-lg font-medium text-white">Selected Files ({files.length})</h4>
                         <Button 
@@ -169,7 +169,7 @@ export default function UploadPage() {
                         </Button>
                       </div>
                       
-                      <div className="grid gap-3 overflow-y-auto flex-1 pr-2 max-h-[300px]">
+                      <div className="grid gap-3 overflow-y-auto pr-2 max-h-[300px]">
                         {files.map((file, i) => (
                           <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10 shrink-0">
                             <div className="flex items-center gap-3 overflow-hidden">
@@ -188,7 +188,7 @@ export default function UploadPage() {
                         ))}
                       </div>
 
-                      <div className="pt-6 mt-auto">
+                      <div className="pt-6">
                         <Button 
                           size="lg" 
                           className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
