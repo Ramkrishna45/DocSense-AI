@@ -19,7 +19,7 @@ from app.models.collection import Collection, document_collections
 from app.services.embedding_service import embedding_service
 from app.utils.file_processor import process_source
 from app.utils.text_chunker import chunk_text
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_cohere import ChatCohere
 
 logger = logging.getLogger(__name__)
 
@@ -34,9 +34,9 @@ async def generate_document_summary(text: str) -> dict:
         # Use only first 10000 characters for summary to save tokens
         text_to_summarize = text[:10000]
         
-        llm = ChatGoogleGenerativeAI(
+        llm = ChatCohere(
             model=settings.LLM_MODEL,
-            google_api_key=settings.GOOGLE_API_KEY,
+            cohere_api_key=settings.COHERE_API_KEY,
             temperature=0.2
         )
         

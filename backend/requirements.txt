@@ -10,7 +10,8 @@ python-docx
 pymupdf
 langchain
 langchain-huggingface
-langchain-google-genai>=4.0
+langchain-cohere
+langchain-voyageai
 pydantic-settings
 aiofiles
 youtube-transcript-api

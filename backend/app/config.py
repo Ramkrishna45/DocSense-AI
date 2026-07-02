@@ -17,16 +17,17 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     JWT_EXPIRY_HOURS: int = 24
 
-    # Google Gemini API
-    GOOGLE_API_KEY: str = ""
+    # External APIs
+    COHERE_API_KEY: str = ""
+    VOYAGE_API_KEY: str = ""
 
     # File Upload
     UPLOAD_DIR: str = "./uploads"
     MAX_FILE_SIZE: int = 52428800  # 50 MB
 
     # Model Configuration
-    EMBEDDING_MODEL: str = "sentence-transformers/all-MiniLM-L6-v2"
-    LLM_MODEL: str = "gemini-1.5-flash"
+    EMBEDDING_MODEL: str = "voyage-2"
+    LLM_MODEL: str = "command-r"
 
     model_config = {
         "env_file": ".env",

@@ -46,13 +46,13 @@ class EmbeddingService:
         if self._model is not None:
             return
 
-        logger.info("Loading embedding model using Google Gemini")
+        logger.info("Loading embedding model using Voyage AI")
         try:
-            from langchain_google_genai import GoogleGenerativeAIEmbeddings
+            from langchain_voyageai import VoyageAIEmbeddings
 
-            self._model = GoogleGenerativeAIEmbeddings(
-                model="models/gemini-embedding-2",
-                google_api_key=settings.GOOGLE_API_KEY,
+            self._model = VoyageAIEmbeddings(
+                model=settings.EMBEDDING_MODEL,
+                voyage_api_key=settings.VOYAGE_API_KEY,
             )
             logger.info("Embedding model loaded successfully")
         except Exception as e:

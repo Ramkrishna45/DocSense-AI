@@ -34,7 +34,7 @@ class Chunk(Base):
     chunk_number: Mapped[int] = mapped_column(Integer, nullable=False)
     page_number: Mapped[int | None] = mapped_column(Integer, nullable=True)
     content: Mapped[str] = mapped_column(Text, nullable=False)
-    embedding: Mapped[list[float]] = mapped_column(Vector(3072), nullable=True)
+    embedding: Mapped[list[float]] = mapped_column(Vector(1024), nullable=True)
 
     # Relationships
     document: Mapped["Document"] = relationship("Document", back_populates="chunks")

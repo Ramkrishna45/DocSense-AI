@@ -20,12 +20,11 @@ class RAGService:
 
     def _get_llm(self):
         if self._llm is None:
-            from langchain_google_genai import ChatGoogleGenerativeAI
-            self._llm = ChatGoogleGenerativeAI(
+            from langchain_cohere import ChatCohere
+            self._llm = ChatCohere(
                 model=settings.LLM_MODEL,
-                google_api_key=settings.GOOGLE_API_KEY,
+                cohere_api_key=settings.COHERE_API_KEY,
                 temperature=0.3,
-                max_output_tokens=2048,
             )
         return self._llm
 
