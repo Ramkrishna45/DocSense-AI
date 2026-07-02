@@ -54,7 +54,7 @@ export default function LoginPage() {
     >
       <div className="mb-2 text-center flex flex-col items-center">
         <div className="w-full h-32 flex items-center justify-center mb-6 overflow-visible pointer-events-none">
-          <img src="/trans-logo.svg" alt="DocSense Logo" className="w-[800px] max-w-none h-auto object-contain" />
+          <img src="/trans-logo.svg" alt="DocSense Logo" className="h-48 w-auto object-contain scale-150 origin-center" />
         </div>
         <h1 className="text-3xl font-bold tracking-tight text-foreground mb-2 mt-4 relative z-10">Welcome Back</h1>
         <p className="text-muted-foreground text-sm relative z-10">Enter your credentials to access your account</p>
