@@ -3,12 +3,13 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, FileText, MessageSquare, Search as SearchIcon, UploadCloud, ChevronRight } from 'lucide-react';
+import { LayoutDashboard, FileText, MessageSquare, Search as SearchIcon, UploadCloud, ChevronRight, Folder } from 'lucide-react';
 import { cn } from '@/lib/utils'; // Assuming cn utility exists from shadcn
 
 const navItems = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
   { name: 'Documents', href: '/documents', icon: FileText },
+  { name: 'Collections', href: '/collections', icon: Folder },
   { name: 'AI Chat', href: '/chat', icon: MessageSquare },
   { name: 'Semantic Search', href: '/search', icon: SearchIcon },
   { name: 'Upload', href: '/upload', icon: UploadCloud },

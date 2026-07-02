@@ -101,3 +101,27 @@ async def rename_document(
     if not doc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Document not found")
     return doc
+
+@router.get("/{document_id}/download")
+async def download_document(
+    document_id: uuid.UUID,
+    current_user: dict = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    from fastapi.responses import FileResponse
+    doc = await document_service.get_document(db, document_id, current_user.id)
+    if not doc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Document not found")
+    
+    if doc.source_type != "file":
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Cannot download non-file documents")
+        
+    file_path = document_service.Path(document_service.settings.UPLOAD_DIR) / doc.filename
+    if not file_path.exists():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="File not found on server")
+        
+    return FileResponse(
+        path=file_path, 
+        filename=doc.original_filename or doc.filename,
+        media_type='application/octet-stream'
+    )

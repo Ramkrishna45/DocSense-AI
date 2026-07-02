@@ -199,3 +199,39 @@ export async function searchDocuments(
     body: JSON.stringify({ query }),
   });
 }
+
+/* ─── Collections ─── */
+import type { Collection } from '@/types';
+
+export async function getCollections(): Promise<Collection[]> {
+  return apiFetch<Collection[]>('/api/collections');
+}
+
+export async function createCollection(name: string): Promise<Collection> {
+  return apiFetch<Collection>('/api/collections', {
+    method: 'POST',
+    body: JSON.stringify({ name }),
+  });
+}
+
+export async function deleteCollection(id: string): Promise<void> {
+  return apiFetch<void>(`/api/collections/${id}`, {
+    method: 'DELETE',
+  });
+}
+
+export async function addDocumentToCollection(collectionId: string, documentId: string): Promise<void> {
+  return apiFetch<void>(`/api/collections/${collectionId}/documents/${documentId}`, {
+    method: 'POST',
+  });
+}
+
+export async function removeDocumentFromCollection(collectionId: string, documentId: string): Promise<void> {
+  return apiFetch<void>(`/api/collections/${collectionId}/documents/${documentId}`, {
+    method: 'DELETE',
+  });
+}
+
+export async function getCollectionDocuments(collectionId: string): Promise<Document[]> {
+  return apiFetch<Document[]>(`/api/collections/${collectionId}/documents`);
+}

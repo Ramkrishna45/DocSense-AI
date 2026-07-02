@@ -81,3 +81,91 @@ async def delete_collection(
     await db.commit()
     
     return {"message": "Collection deleted successfully"}
+
+@router.post("/{collection_id}/documents/{document_id}")
+async def add_document_to_collection(
+    collection_id: uuid.UUID,
+    document_id: uuid.UUID,
+    current_user: dict = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    from sqlalchemy import insert
+    from app.models.document import Document
+    
+    # Verify collection belongs to user
+    result = await db.execute(select(Collection).where(Collection.id == collection_id, Collection.user_id == current_user.id))
+    collection = result.scalar_one_or_none()
+    if not collection:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Collection not found")
+        
+    # Verify document belongs to user
+    result = await db.execute(select(Document).where(Document.id == document_id, Document.user_id == current_user.id))
+    document = result.scalar_one_or_none()
+    if not document:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Document not found")
+        
+    # Check if already in collection
+    result = await db.execute(
+        select(document_collections).where(
+            document_collections.c.collection_id == collection_id,
+            document_collections.c.document_id == document_id
+        )
+    )
+    if result.first():
+        return {"message": "Document already in collection"}
+        
+    # Add to collection
+    await db.execute(
+        insert(document_collections).values(collection_id=collection_id, document_id=document_id)
+    )
+    await db.commit()
+    
+    return {"message": "Document added to collection successfully"}
+
+@router.delete("/{collection_id}/documents/{document_id}")
+async def remove_document_from_collection(
+    collection_id: uuid.UUID,
+    document_id: uuid.UUID,
+    current_user: dict = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    # Verify collection belongs to user
+    result = await db.execute(select(Collection).where(Collection.id == collection_id, Collection.user_id == current_user.id))
+    collection = result.scalar_one_or_none()
+    if not collection:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Collection not found")
+        
+    await db.execute(
+        delete(document_collections).where(
+            document_collections.c.collection_id == collection_id,
+            document_collections.c.document_id == document_id
+        )
+    )
+    await db.commit()
+    
+    return {"message": "Document removed from collection successfully"}
+
+@router.get("/{collection_id}/documents")
+async def list_collection_documents(
+    collection_id: uuid.UUID,
+    current_user: dict = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    from app.models.document import Document
+    from app.schemas.document import DocumentResponse
+    
+    # Verify collection belongs to user
+    result = await db.execute(select(Collection).where(Collection.id == collection_id, Collection.user_id == current_user.id))
+    collection = result.scalar_one_or_none()
+    if not collection:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Collection not found")
+        
+    result = await db.execute(
+        select(Document)
+        .join(document_collections, Document.id == document_collections.c.document_id)
+        .where(document_collections.c.collection_id == collection_id)
+        .order_by(Document.created_at.desc())
+    )
+    
+    documents = result.scalars().all()
+    return documents

@@ -7,7 +7,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { apiFetch } from "@/lib/api";
 import { toast } from "sonner";
 
+import { useRouter } from 'next/navigation';
+
 export default function UploadPage() {
+  const router = useRouter();
   const [isDragging, setIsDragging] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -33,6 +36,7 @@ export default function UploadPage() {
       }
       toast.success("Files uploaded successfully!");
       setFiles([]);
+      router.push('/documents');
     } catch (error: any) {
       toast.error("Upload failed: " + (error.message || "Unknown error"));
       console.error("Upload error", error);
