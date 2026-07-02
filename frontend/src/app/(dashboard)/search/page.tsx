@@ -101,7 +101,7 @@ export default function SearchPage() {
                       </div>
                     </div>
                     <span className="border border-indigo-500/30 text-indigo-300 bg-indigo-500/10 px-2 py-1 rounded text-xs">
-                      {(item.similarity_score * 100).toFixed(1)}% match
+                      {((item.similarity_score || 0) * 100).toFixed(1)}% match
                     </span>
                   </div>
                   

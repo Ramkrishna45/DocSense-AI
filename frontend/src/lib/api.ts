@@ -198,10 +198,11 @@ export async function deleteConversation(id: string): Promise<void> {
 export async function searchDocuments(
   query: string,
 ): Promise<SearchResult[]> {
-  return apiFetch<SearchResult[]>('/api/search', {
+  const response = await apiFetch<{results: SearchResult[], query: string}>('/api/search', {
     method: 'POST',
     body: JSON.stringify({ query }),
   });
+  return response.results || [];
 }
 
 /* ─── Collections ─── */
