@@ -20,11 +20,8 @@ export default function Sidebar() {
 
   return (
     <aside className="w-64 hidden md:flex flex-col h-full border-r border-border/50 glass">
-      <div className="p-6 flex items-center space-x-3">
-        <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shadow-lg shadow-primary/30">
-          <span className="text-primary-foreground font-bold text-xl">D</span>
-        </div>
-        <span className="font-bold text-xl tracking-tight">DocSense</span>
+      <div className="p-6 flex items-center">
+        <img src="/full-logo.svg" alt="DocSense Logo" className="h-10 w-auto object-contain" />
       </div>
 
       <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
