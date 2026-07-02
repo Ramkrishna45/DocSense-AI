@@ -51,11 +51,7 @@ async def init_db() -> None:
     async with engine.begin() as conn:
         # Enable pgvector extension
         await conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
-        # Drop chunks table to allow dimension migration
-        await conn.execute(text("DROP TABLE IF EXISTS chunks CASCADE"))
-        await conn.execute(text("DROP TABLE IF EXISTS document_chunks CASCADE"))
-        # Drop documents to force schema update for new columns (summary, reading time, etc.)
-        await conn.execute(text("DROP TABLE IF EXISTS documents CASCADE"))
+        # Create all tables from registered models
         # Create all tables from registered models
         await conn.run_sync(Base.metadata.create_all)
 
