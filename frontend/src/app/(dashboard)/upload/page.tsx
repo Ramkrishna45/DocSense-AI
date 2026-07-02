@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { UploadCloud, File, X, FileCheck2, Loader2, Link as LinkIcon, Youtube, Github, Globe } from "lucide-react";
+import { UploadCloud, File, X, FileCheck2, Loader2, Link as LinkIcon, PlaySquare, Code, Globe } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { apiFetch } from "@/lib/api";
 import { toast } from "sonner";
@@ -108,10 +108,10 @@ export default function UploadPage() {
             <Globe className="w-4 h-4 mr-2" /> Web URL
           </TabsTrigger>
           <TabsTrigger value="youtube" className="data-[state=active]:bg-red-500/20 data-[state=active]:text-red-300 transition-all">
-            <Youtube className="w-4 h-4 mr-2" /> YouTube
+            <PlaySquare className="w-4 h-4 mr-2" /> YouTube
           </TabsTrigger>
           <TabsTrigger value="github" className="data-[state=active]:bg-zinc-700/50 data-[state=active]:text-zinc-300 transition-all">
-            <Github className="w-4 h-4 mr-2" /> GitHub
+            <Code className="w-4 h-4 mr-2" /> GitHub
           </TabsTrigger>
         </TabsList>
 
@@ -213,8 +213,8 @@ export default function UploadPage() {
                   tab === 'youtube' ? 'bg-red-500/20 text-red-400' : 'bg-zinc-700/50 text-zinc-300'
                 }`}>
                   {tab === 'url' && <Globe className="w-8 h-8" />}
-                  {tab === 'youtube' && <Youtube className="w-8 h-8" />}
-                  {tab === 'github' && <Github className="w-8 h-8" />}
+                  {tab === 'youtube' && <PlaySquare className="w-8 h-8" />}
+                  {tab === 'github' && <Code className="w-8 h-8" />}
                 </div>
                 
                 <div className="space-y-2 w-full max-w-lg">

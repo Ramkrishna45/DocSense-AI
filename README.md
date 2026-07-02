@@ -184,11 +184,4 @@ docsense-ai/
 
 ---
 
-<div align="center">
-  <p>Built with ❤️ by <strong>Ramkrishna</strong></p>
-  <p>
-    <a href="https://github.com/Ramkrishna45">GitHub</a> • 
-    <a href="https://github.com/Ramkrishna45/DocSense-AI">DocSense AI</a> • 
-    <a href="https://github.com/Ramkrishna45/DocSense-Companion">Web Extension</a>
-  </p>
-</div>
+
