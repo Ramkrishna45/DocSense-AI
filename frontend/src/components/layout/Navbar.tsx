@@ -48,15 +48,12 @@ export default function Navbar() {
         </button>
 
         <DropdownMenu>
-          {/* @ts-expect-error - asChild type mismatch with Radix */}
-          <DropdownMenuTrigger asChild>
-            <button className="relative w-9 h-9 rounded-full overflow-hidden border-2 border-border hover:border-primary/50 transition-colors focus:outline-none">
-              <img
-                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name || 'Felix'}`}
-                alt="User Avatar"
-                className="w-full h-full object-cover bg-secondary"
-              />
-            </button>
+          <DropdownMenuTrigger className="relative w-9 h-9 rounded-full overflow-hidden border-2 border-border hover:border-primary/50 transition-colors focus:outline-none cursor-pointer">
+            <img
+              src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name || 'Felix'}`}
+              alt="User Avatar"
+              className="w-full h-full object-cover bg-secondary"
+            />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56 glass-card border-border/50">
             <DropdownMenuLabel>{user?.name || 'My Account'}</DropdownMenuLabel>
