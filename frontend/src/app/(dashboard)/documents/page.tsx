@@ -81,15 +81,11 @@ const DocumentCard = ({ doc, onDelete, collections }: { doc: Document; onDelete:
             <FileText className="w-6 h-6 text-indigo-400" />
           </div>
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                size="icon" 
-                variant="ghost" 
-                className="h-8 w-8 text-zinc-400 hover:text-white hover:bg-white/10 rounded-full"
-                onClick={(e) => e.preventDefault()}
-              >
-                <MoreVertical className="w-4 h-4" />
-              </Button>
+            <DropdownMenuTrigger 
+              className="h-8 w-8 text-zinc-400 hover:text-white hover:bg-white/10 rounded-full flex items-center justify-center outline-none"
+              onClick={(e) => e.preventDefault()}
+            >
+              <MoreVertical className="w-4 h-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48 bg-zinc-900 border-zinc-800 text-zinc-300">
               <DropdownMenuItem onClick={handleDownload} className="cursor-pointer hover:bg-zinc-800 focus:bg-zinc-800">
