@@ -34,6 +34,12 @@ The system leverages **Retrieval-Augmented Generation (RAG)** to provide highly 
 * **Workspaces / Collections:** Organize knowledge into specific collections (e.g., "College", "Interviews", "Work").
 * **Premium UI:** Beautiful dark mode, glassmorphism UI built with Tailwind CSS. Perfectly scaled vector graphics and fluid animations.
 
+## 🧩 Web Extension (DocSense AI Companion)
+Extend the power of DocSense AI directly into your browser with our companion Web Extension! 
+* **Seamless Ingestion:** Instantly save the current webpage, article, or selected text straight to your DocSense AI knowledge base with a single click.
+* **Contextual Search:** Highlight any text on a page to quickly run a semantic search against your private documents.
+* **Repository:** Check out the source code and installation instructions here: **[DocSense AI Web Extension on GitHub](https://github.com/Ramkrishna45/DocSense-AI-Extension)**
+
 ## 🏗️ Architecture Diagram
 
 ```mermaid
