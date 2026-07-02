@@ -40,9 +40,9 @@ export default function CollectionsPage() {
       setNewCollectionName("");
       toast.success("Collection created");
       fetchCollections();
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      toast.error("Failed to create collection");
+      toast.error(error.message || "Failed to create collection");
     } finally {
       setIsCreating(false);
     }
@@ -82,10 +82,15 @@ export default function CollectionsPage() {
               }
             }}
           />
-          <Button onClick={handleCreate} disabled={isCreating || !newCollectionName.trim()} className="bg-indigo-600 hover:bg-indigo-700 text-white shrink-0">
+          <button 
+            type="button" 
+            onClick={handleCreate} 
+            disabled={isCreating || !newCollectionName.trim()} 
+            className="flex items-center justify-center h-10 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white shrink-0 font-medium transition-colors disabled:opacity-50 disabled:pointer-events-none"
+          >
             {isCreating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
             {isCreating ? "" : "Create"}
-          </Button>
+          </button>
         </div>
       </div>
 
