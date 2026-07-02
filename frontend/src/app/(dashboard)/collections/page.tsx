@@ -69,18 +69,24 @@ export default function CollectionsPage() {
           <p className="text-zinc-400">Organize your documents into groups or folders.</p>
         </div>
         
-        <form onSubmit={handleCreate} className="flex items-center gap-3 w-full md:w-auto">
+        <div className="flex items-center gap-3 w-full md:w-auto">
           <Input 
             value={newCollectionName}
             onChange={(e) => setNewCollectionName(e.target.value)}
             placeholder="New collection name..." 
             className="bg-white/5 border-white/10 text-white placeholder:text-zinc-500 focus-visible:ring-indigo-500"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleCreate(e as any);
+              }
+            }}
           />
-          <Button type="submit" disabled={isCreating || !newCollectionName.trim()} className="bg-indigo-600 hover:bg-indigo-700 text-white shrink-0">
+          <Button onClick={handleCreate} disabled={isCreating || !newCollectionName.trim()} className="bg-indigo-600 hover:bg-indigo-700 text-white shrink-0">
             {isCreating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
             {isCreating ? "" : "Create"}
           </Button>
-        </form>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
