@@ -293,6 +293,7 @@ async def process_chat(
     sources_response = []
     for source in answer_data.get("sources", []):
         sources_response.append({
+            "document_id": source.get("document_id", ""),
             "document_title": source["document_title"],
             "page_number": source.get("page_number"),
             "chunk_number": source["chunk_number"],
