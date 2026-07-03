@@ -2,9 +2,10 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, FileText, Download, Trash2, Calendar, Database, Activity, CheckCircle2, Loader2 } from "lucide-react";
+import { ArrowLeft, FileText, Download, Trash2, Calendar, Database, Activity, CheckCircle2, Loader2, Eye } from "lucide-react";
 import Link from 'next/link';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getDocument, deleteDocument, downloadDocument } from '@/lib/api';
 import type { Document } from '@/types';
 import { toast } from 'sonner';
@@ -17,6 +18,36 @@ export default function DocumentDetailPage() {
   const [loading, setLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+
+  const searchParams = useSearchParams();
+  const pageParam = searchParams.get('page');
+  const [activeTab, setActiveTab] = useState(pageParam ? "viewer" : "overview");
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+
+  const isPdf = doc?.original_filename?.toLowerCase().endsWith('.pdf');
+
+  useEffect(() => {
+    if (activeTab === "viewer" && !pdfUrl && isPdf) {
+      const loadPdf = async () => {
+        try {
+          const blob = await downloadDocument(id);
+          const url = window.URL.createObjectURL(blob);
+          setPdfUrl(url);
+        } catch (error) {
+          toast.error("Failed to load PDF viewer");
+        }
+      };
+      loadPdf();
+    }
+  }, [activeTab, isPdf, id, pdfUrl]);
+
+  useEffect(() => {
+    return () => {
+      if (pdfUrl) {
+        window.URL.revokeObjectURL(pdfUrl);
+      }
+    };
+  }, [pdfUrl]);
 
   useEffect(() => {
     if (!id) return;
@@ -121,78 +152,176 @@ export default function DocumentDetailPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="glass-card bg-white/5 border-white/10 md:col-span-2">
-          <CardHeader>
-            <CardTitle className="text-white">Processing Status</CardTitle>
-            <CardDescription className="text-zinc-400">Current state of the document pipeline</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-white font-medium">Text Extraction & Chunking</span>
-                <span className="text-indigo-400">{isCompleted ? '100%' : doc.status === 'failed' ? 'Failed' : 'Processing...'}</span>
-              </div>
-              <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
-                <div className={`h-full ${doc.status === 'failed' ? 'bg-red-500' : 'bg-indigo-500'} ${!isCompleted && doc.status !== 'failed' ? 'animate-pulse w-1/2' : 'w-full'}`} />
-              </div>
-            </div>
+      {isPdf ? (
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex flex-col">
+          <TabsList className="grid w-full max-w-md grid-cols-2 bg-white/5 border border-white/10 mb-6">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="viewer">PDF Viewer</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="overview" className="mt-0 focus-visible:outline-none focus-visible:ring-0">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Card className="glass-card bg-white/5 border-white/10 md:col-span-2">
+                <CardHeader>
+                  <CardTitle className="text-white">Processing Status</CardTitle>
+                  <CardDescription className="text-zinc-400">Current state of the document pipeline</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-white font-medium">Text Extraction & Chunking</span>
+                      <span className="text-indigo-400">{isCompleted ? '100%' : doc.status === 'failed' ? 'Failed' : 'Processing...'}</span>
+                    </div>
+                    <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                      <div className={`h-full ${doc.status === 'failed' ? 'bg-red-500' : 'bg-indigo-500'} ${!isCompleted && doc.status !== 'failed' ? 'animate-pulse w-1/2' : 'w-full'}`} />
+                    </div>
+                  </div>
 
-            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/10">
-              <div className="p-4 rounded-xl bg-white/5 border border-white/10">
-                <div className="flex items-center gap-2 text-zinc-400 mb-2">
-                  <Activity className="w-4 h-4 text-indigo-400" />
-                  <span className="text-sm">Chunks Generated</span>
-                </div>
-                <div className="text-3xl font-bold text-white">{doc.chunk_count}</div>
-              </div>
-              <div className="p-4 rounded-xl bg-white/5 border border-white/10">
-                <div className="flex items-center gap-2 text-zinc-400 mb-2">
-                  <CheckCircle2 className={`w-4 h-4 ${isCompleted ? 'text-emerald-400' : 'text-zinc-500'}`} />
-                  <span className="text-sm">Vectors Embedded</span>
-                </div>
-                <div className="text-3xl font-bold text-white">{isCompleted ? doc.chunk_count : 0}</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+                  <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/10">
+                    <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                      <div className="flex items-center gap-2 text-zinc-400 mb-2">
+                        <Activity className="w-4 h-4 text-indigo-400" />
+                        <span className="text-sm">Chunks Generated</span>
+                      </div>
+                      <div className="text-3xl font-bold text-white">{doc.chunk_count}</div>
+                    </div>
+                    <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                      <div className="flex items-center gap-2 text-zinc-400 mb-2">
+                        <CheckCircle2 className={`w-4 h-4 ${isCompleted ? 'text-emerald-400' : 'text-zinc-500'}`} />
+                        <span className="text-sm">Vectors Embedded</span>
+                      </div>
+                      <div className="text-3xl font-bold text-white">{isCompleted ? doc.chunk_count : 0}</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
 
-        <Card className="glass-card bg-white/5 border-white/10">
-          <CardHeader>
-            <CardTitle className="text-white">Metadata</CardTitle>
-            <CardDescription className="text-zinc-400">File properties</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-lg bg-indigo-500/20 flex items-center justify-center shrink-0">
-                <Database className="w-5 h-5 text-indigo-400" />
-              </div>
-              <div>
-                <p className="text-sm text-zinc-500 font-medium mb-1">File Size</p>
-                <p className="text-white">{(doc.size / (1024 * 1024)).toFixed(2)} MB</p>
-              </div>
+              <Card className="glass-card bg-white/5 border-white/10">
+                <CardHeader>
+                  <CardTitle className="text-white">Metadata</CardTitle>
+                  <CardDescription className="text-zinc-400">File properties</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-lg bg-indigo-500/20 flex items-center justify-center shrink-0">
+                      <Database className="w-5 h-5 text-indigo-400" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-zinc-500 font-medium mb-1">File Size</p>
+                      <p className="text-white">{(doc.size / (1024 * 1024)).toFixed(2)} MB</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center shrink-0">
+                      <Calendar className="w-5 h-5 text-blue-400" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-zinc-500 font-medium mb-1">Upload Date</p>
+                      <p className="text-white">{new Date(doc.created_at).toLocaleDateString()}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center shrink-0">
+                      <FileText className="w-5 h-5 text-purple-400" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-zinc-500 font-medium mb-1">File Type</p>
+                      <p className="text-white">{doc.original_filename.split('.').pop()?.toUpperCase() || 'UNKNOWN'}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center shrink-0">
-                <Calendar className="w-5 h-5 text-blue-400" />
+          </TabsContent>
+          <TabsContent value="viewer" className="mt-0 h-[85vh] bg-zinc-900 border border-white/10 rounded-xl overflow-hidden focus-visible:outline-none focus-visible:ring-0">
+            {pdfUrl ? (
+              <iframe 
+                src={`${pdfUrl}${pageParam ? `#page=${pageParam}` : ''}`} 
+                className="w-full h-full border-0" 
+                title={doc.title}
+              />
+            ) : (
+              <div className="w-full h-full flex flex-col items-center justify-center gap-4">
+                <Loader2 className="w-10 h-10 animate-spin text-indigo-500" />
+                <p className="text-sm text-zinc-400">Loading secure PDF viewer...</p>
               </div>
-              <div>
-                <p className="text-sm text-zinc-500 font-medium mb-1">Upload Date</p>
-                <p className="text-white">{new Date(doc.created_at).toLocaleDateString()}</p>
+            )}
+          </TabsContent>
+        </Tabs>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Card className="glass-card bg-white/5 border-white/10 md:col-span-2">
+            <CardHeader>
+              <CardTitle className="text-white">Processing Status</CardTitle>
+              <CardDescription className="text-zinc-400">Current state of the document pipeline</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-white font-medium">Text Extraction & Chunking</span>
+                  <span className="text-indigo-400">{isCompleted ? '100%' : doc.status === 'failed' ? 'Failed' : 'Processing...'}</span>
+                </div>
+                <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                  <div className={`h-full ${doc.status === 'failed' ? 'bg-red-500' : 'bg-indigo-500'} ${!isCompleted && doc.status !== 'failed' ? 'animate-pulse w-1/2' : 'w-full'}`} />
+                </div>
               </div>
-            </div>
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center shrink-0">
-                <FileText className="w-5 h-5 text-purple-400" />
+
+              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/10">
+                <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                  <div className="flex items-center gap-2 text-zinc-400 mb-2">
+                    <Activity className="w-4 h-4 text-indigo-400" />
+                    <span className="text-sm">Chunks Generated</span>
+                  </div>
+                  <div className="text-3xl font-bold text-white">{doc.chunk_count}</div>
+                </div>
+                <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                  <div className="flex items-center gap-2 text-zinc-400 mb-2">
+                    <CheckCircle2 className={`w-4 h-4 ${isCompleted ? 'text-emerald-400' : 'text-zinc-500'}`} />
+                    <span className="text-sm">Vectors Embedded</span>
+                  </div>
+                  <div className="text-3xl font-bold text-white">{isCompleted ? doc.chunk_count : 0}</div>
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-zinc-500 font-medium mb-1">File Type</p>
-                <p className="text-white">{doc.original_filename.split('.').pop()?.toUpperCase() || 'UNKNOWN'}</p>
+            </CardContent>
+          </Card>
+
+          <Card className="glass-card bg-white/5 border-white/10">
+            <CardHeader>
+              <CardTitle className="text-white">Metadata</CardTitle>
+              <CardDescription className="text-zinc-400">File properties</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-lg bg-indigo-500/20 flex items-center justify-center shrink-0">
+                  <Database className="w-5 h-5 text-indigo-400" />
+                </div>
+                <div>
+                  <p className="text-sm text-zinc-500 font-medium mb-1">File Size</p>
+                  <p className="text-white">{(doc.size / (1024 * 1024)).toFixed(2)} MB</p>
+                </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center shrink-0">
+                  <Calendar className="w-5 h-5 text-blue-400" />
+                </div>
+                <div>
+                  <p className="text-sm text-zinc-500 font-medium mb-1">Upload Date</p>
+                  <p className="text-white">{new Date(doc.created_at).toLocaleDateString()}</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center shrink-0">
+                  <FileText className="w-5 h-5 text-purple-400" />
+                </div>
+                <div>
+                  <p className="text-sm text-zinc-500 font-medium mb-1">File Type</p>
+                  <p className="text-white">{doc.original_filename.split('.').pop()?.toUpperCase() || 'UNKNOWN'}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }

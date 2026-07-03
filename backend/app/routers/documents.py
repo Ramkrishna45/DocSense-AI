@@ -120,8 +120,12 @@ async def download_document(
     if not file_path.exists():
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="File not found on server")
         
+    filename = doc.original_filename or doc.filename
+    is_pdf = filename.lower().endswith('.pdf')
+    
     return FileResponse(
         path=file_path, 
-        filename=doc.original_filename or doc.filename,
-        media_type='application/octet-stream'
+        filename=filename,
+        media_type='application/pdf' if is_pdf else 'application/octet-stream',
+        content_disposition_type="inline" if is_pdf else "attachment"
     )

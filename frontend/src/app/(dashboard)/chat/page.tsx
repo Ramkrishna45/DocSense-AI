@@ -3,7 +3,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Send, Bot, User, Sparkles, CornerDownLeft, FileText, MessageSquare, Plus, Loader2, Clock, Layers, Database, X, Check } from "lucide-react";
+import { Send, Bot, User, Sparkles, CornerDownLeft, FileText, MessageSquare, Plus, Loader2, Clock, Layers, Database, X, Check, ExternalLink } from "lucide-react";
+import Link from 'next/link';
 import { motion, AnimatePresence } from "framer-motion";
 import { sendChatMessage, getConversations, getConversationMessages, getCollections, getDocuments } from '@/lib/api';
 import type { SourceInfo, Conversation, Collection, Document } from '@/types';
@@ -78,8 +79,16 @@ const MessageBubble = ({ message, isBot, sources }: { message: string, isBot: bo
               >
                 <div className="mt-2 p-4 rounded-xl bg-black/40 border border-white/10 text-sm text-zinc-300 relative">
                   <div className="absolute left-0 top-0 bottom-0 w-1 bg-indigo-500 rounded-l-xl"></div>
-                  <div className="flex justify-between items-start mb-2">
+                  <div className="flex justify-between items-center mb-2">
                     <span className="font-semibold text-white text-xs uppercase tracking-wider opacity-60">Source Excerpt</span>
+                    {sources[expandedSource].document_id && (
+                      <Link 
+                        href={`/documents/${sources[expandedSource].document_id}?page=${sources[expandedSource].page_number || 1}`}
+                        className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition-colors bg-indigo-500/10 hover:bg-indigo-500/20 px-2 py-1 rounded-md"
+                      >
+                        View in PDF <ExternalLink className="w-3 h-3" />
+                      </Link>
+                    )}
                   </div>
                   <p className="italic leading-relaxed">"{sources[expandedSource].excerpt}"</p>
                 </div>
