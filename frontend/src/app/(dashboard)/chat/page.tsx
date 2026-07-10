@@ -49,6 +49,7 @@ const MessageBubble = ({ message, isBot, sources }: { message: string, isBot: bo
             <div className="grid gap-2 mt-1">
               {sources.map((source, i) => {
                 const snippet = encodeURIComponent(source.excerpt.substring(0, 50));
+                const isPdf = (source.original_filename || source.document_title)?.toLowerCase().endsWith('.pdf');
                 return (
                   <div key={i} className={`p-3 rounded-lg border text-sm ${
                     !isBot 
@@ -66,7 +67,7 @@ const MessageBubble = ({ message, isBot, sources }: { message: string, isBot: bo
                     </div>
                     <p className="opacity-80 italic line-clamp-2">"{source.excerpt}"</p>
                     
-                    {source.page_number != null && (
+                    {isPdf && (
                       <Link 
                         href={`/documents/${source.document_id}?page=${source.page_number || 1}&search=${snippet}`}
                         className="inline-flex items-center mt-2 text-xs font-medium text-indigo-400 hover:text-indigo-300 transition-colors"

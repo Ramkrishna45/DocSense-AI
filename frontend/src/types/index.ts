@@ -48,6 +48,7 @@ export interface Message {
 export interface SourceInfo {
   document_id: string;
   document_title: string;
+  original_filename?: string;
   page_number: number | null;
   chunk_number: number;
   excerpt: string;
@@ -58,6 +59,7 @@ export interface SourceInfo {
 export interface SearchResult {
   document_id: string;
   document_title: string;
+  original_filename?: string;
   page_number: number | null;
   chunk_number: number;
   content: string;

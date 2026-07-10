@@ -140,6 +140,7 @@ class RAGService:
             sources.append({
                 "document_id": str(document.id) if document else "",
                 "document_title": document.title,
+                "original_filename": document.original_filename if document else "",
                 "page_number": chunk.page_number,
                 "chunk_number": chunk.chunk_number,
                 "excerpt": chunk.content[:200] + "..." if len(chunk.content) > 200 else chunk.content,
