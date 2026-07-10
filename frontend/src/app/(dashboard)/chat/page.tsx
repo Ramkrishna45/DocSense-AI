@@ -66,7 +66,7 @@ const MessageBubble = ({ message, isBot, sources }: { message: string, isBot: bo
                     </div>
                     <p className="opacity-80 italic line-clamp-2">"{source.excerpt}"</p>
                     
-                    {source.document_title?.toLowerCase().endsWith('.pdf') && (
+                    {source.page_number != null && (
                       <Link 
                         href={`/documents/${source.document_id}?page=${source.page_number || 1}&search=${snippet}`}
                         className="inline-flex items-center mt-2 text-xs font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
