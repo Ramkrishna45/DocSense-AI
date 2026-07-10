@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Send, Bot, User, Sparkles, CornerDownLeft, FileText, MessageSquare, Plus, Loader2, Clock, Layers, Database, X, Check, ExternalLink } from "lucide-react";
+import { Send, Bot, User, Sparkles, CornerDownLeft, FileText, MessageSquare, Plus, Loader2, Clock, Layers, Database, X, Check, ExternalLink, ChevronRight } from "lucide-react";
 import Link from 'next/link';
 import { motion, AnimatePresence } from "framer-motion";
 import { sendChatMessage, getConversations, getConversationMessages, getCollections, getDocuments } from '@/lib/api';

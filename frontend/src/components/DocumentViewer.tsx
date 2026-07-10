@@ -56,8 +56,12 @@ export default function DocumentViewer({ pdfUrl, initialPage = 1, searchText = '
       const split = str.split(pattern);
       if (split.length <= 1) return str;
       
-      return split.map((part, index) => 
-        index % 2 === 1 ? <mark key={index} className="bg-yellow-400/50 text-transparent rounded px-0.5" title="Highlighted match">{part}</mark> : part
+      return (
+        <React.Fragment>
+          {split.map((part, index) => 
+            index % 2 === 1 ? <mark key={index} className="bg-yellow-400/50 text-transparent rounded px-0.5" title="Highlighted match">{part}</mark> : part
+          )}
+        </React.Fragment>
       );
     },
     [searchText]
@@ -161,7 +165,8 @@ export default function DocumentViewer({ pdfUrl, initialPage = 1, searchText = '
               }
               renderTextLayer={true}
               renderAnnotationLayer={true}
-              customTextRenderer={textRenderer}
+              {/* @ts-expect-error react-pdf typing for customTextRenderer is incomplete in some versions */}
+              customTextRenderer={textRenderer as any}
             />
           </div>
         </Document>
