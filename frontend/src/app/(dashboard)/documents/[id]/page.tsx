@@ -9,6 +9,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getDocument, deleteDocument, downloadDocument } from '@/lib/api';
 import type { Document } from '@/types';
 import { toast } from 'sonner';
+import dynamic from 'next/dynamic';
+
+const DocumentViewer = dynamic(() => import('@/components/DocumentViewer'), { 
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex flex-col items-center justify-center gap-4 bg-zinc-900 rounded-xl border border-white/10 min-h-[50vh]">
+      <Loader2 className="w-10 h-10 animate-spin text-indigo-500" />
+      <p className="text-sm text-zinc-400">Loading viewer engine...</p>
+    </div>
+  )
+});
 
 export default function DocumentDetailPage() {
   const router = useRouter();
@@ -233,15 +244,11 @@ export default function DocumentDetailPage() {
               </Card>
             </div>
           </TabsContent>
-          <TabsContent value="viewer" className="mt-0 h-[85vh] bg-zinc-900 border border-white/10 rounded-xl overflow-hidden focus-visible:outline-none focus-visible:ring-0">
+          <TabsContent value="viewer" className="mt-0 h-[85vh] focus-visible:outline-none focus-visible:ring-0">
             {pdfUrl ? (
-              <iframe 
-                src={`${pdfUrl}${pageParam ? `#page=${pageParam}` : ''}`} 
-                className="w-full h-full border-0" 
-                title={doc.title}
-              />
+              <DocumentViewer pdfUrl={pdfUrl} initialPage={pageParam ? parseInt(pageParam) : 1} />
             ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center gap-4">
+              <div className="w-full h-full flex flex-col items-center justify-center gap-4 bg-zinc-900 rounded-xl border border-white/10">
                 <Loader2 className="w-10 h-10 animate-spin text-indigo-500" />
                 <p className="text-sm text-zinc-400">Loading secure PDF viewer...</p>
               </div>
