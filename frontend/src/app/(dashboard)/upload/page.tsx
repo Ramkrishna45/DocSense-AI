@@ -100,18 +100,18 @@ export default function UploadPage() {
       </div>
 
       <Tabs defaultValue="file" className="w-full flex flex-col" onValueChange={(v) => { setActiveTab(v); setSourceUrl(""); }}>
-        <TabsList className="grid w-full grid-cols-4 bg-white/5 border border-white/10 mb-8 h-12">
-          <TabsTrigger value="file" className="data-[state=active]:bg-indigo-500/20 data-[state=active]:text-indigo-300 transition-all">
-            <UploadCloud className="w-4 h-4 mr-2" /> Documents
+        <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 bg-white/5 border border-white/10 mb-8 h-auto p-1 gap-1">
+          <TabsTrigger value="file" className="data-[state=active]:bg-indigo-500/20 data-[state=active]:text-indigo-300 transition-all py-2">
+            <UploadCloud className="w-4 h-4 mr-1 sm:mr-2 shrink-0" /> <span className="truncate text-xs sm:text-sm">Documents</span>
           </TabsTrigger>
-          <TabsTrigger value="url" className="data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-300 transition-all">
-            <Globe className="w-4 h-4 mr-2" /> Web URL
+          <TabsTrigger value="url" className="data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-300 transition-all py-2">
+            <Globe className="w-4 h-4 mr-1 sm:mr-2 shrink-0" /> <span className="truncate text-xs sm:text-sm">Web URL</span>
           </TabsTrigger>
-          <TabsTrigger value="youtube" className="data-[state=active]:bg-red-500/20 data-[state=active]:text-red-300 transition-all">
-            <PlaySquare className="w-4 h-4 mr-2" /> YouTube
+          <TabsTrigger value="youtube" className="data-[state=active]:bg-red-500/20 data-[state=active]:text-red-300 transition-all py-2">
+            <PlaySquare className="w-4 h-4 mr-1 sm:mr-2 shrink-0" /> <span className="truncate text-xs sm:text-sm">YouTube</span>
           </TabsTrigger>
-          <TabsTrigger value="github" className="data-[state=active]:bg-zinc-700/50 data-[state=active]:text-zinc-300 transition-all">
-            <Code className="w-4 h-4 mr-2" /> GitHub
+          <TabsTrigger value="github" className="data-[state=active]:bg-zinc-700/50 data-[state=active]:text-zinc-300 transition-all py-2">
+            <Code className="w-4 h-4 mr-1 sm:mr-2 shrink-0" /> <span className="truncate text-xs sm:text-sm">GitHub</span>
           </TabsTrigger>
         </TabsList>
 
@@ -234,7 +234,7 @@ export default function UploadPage() {
                   </p>
                 </div>
 
-                <div className="flex w-full max-w-lg gap-2">
+                <div className="flex flex-col sm:flex-row w-full max-w-lg gap-3 sm:gap-2 px-4 sm:px-0">
                   <Input 
                     type="url" 
                     placeholder={`https://${tab === 'youtube' ? 'youtube.com/watch?v=...' : tab === 'github' ? 'raw.githubusercontent.com/...' : 'example.com/article'}`} 
