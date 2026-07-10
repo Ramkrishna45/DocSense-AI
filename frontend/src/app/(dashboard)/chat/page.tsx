@@ -66,12 +66,14 @@ const MessageBubble = ({ message, isBot, sources }: { message: string, isBot: bo
                     </div>
                     <p className="opacity-80 italic line-clamp-2">"{source.excerpt}"</p>
                     
-                    <Link 
-                      href={`/documents/${source.document_id}?page=${source.page_number || 1}&search=${snippet}`}
-                      className="inline-flex items-center mt-2 text-xs font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
-                    >
-                      View in Document <ChevronRight className="w-3 h-3 ml-1" />
-                    </Link>
+                    {source.document_title?.toLowerCase().endsWith('.pdf') && (
+                      <Link 
+                        href={`/documents/${source.document_id}?page=${source.page_number || 1}&search=${snippet}`}
+                        className="inline-flex items-center mt-2 text-xs font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
+                      >
+                        View in Document <ChevronRight className="w-3 h-3 ml-1" />
+                      </Link>
+                    )}
                   </div>
                 );
               })}

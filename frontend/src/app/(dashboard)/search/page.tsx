@@ -88,7 +88,8 @@ export default function SearchPage() {
           ) : (
             results.map((item, index) => {
               const snippet = encodeURIComponent(item.content.substring(0, 50));
-              const href = item.document_id ? `/documents/${item.document_id}?page=${item.page_number || 1}&search=${snippet}` : '#';
+              const isPdf = item.document_title?.toLowerCase().endsWith('.pdf');
+              const href = item.document_id ? `/documents/${item.document_id}${isPdf ? `?page=${item.page_number || 1}&search=${snippet}` : ''}` : '#';
               const cardContent = (
                 <Card className={`glass-card bg-white/5 border-white/10 transition-all duration-300 group ${item.document_id ? 'hover:border-indigo-500/30 cursor-pointer' : 'opacity-80'}`}>
                   <CardContent className="p-6">
@@ -115,7 +116,11 @@ export default function SearchPage() {
                     
                     <div className="flex items-center text-xs font-medium text-indigo-400 group-hover:text-indigo-300 transition-colors">
                       {item.document_id ? (
-                        <>View in Document <ChevronRight className="w-3 h-3 ml-1" /></>
+                        isPdf ? (
+                          <>View in Document <ChevronRight className="w-3 h-3 ml-1" /></>
+                        ) : (
+                          <>View Details <ChevronRight className="w-3 h-3 ml-1" /></>
+                        )
                       ) : (
                         <span className="text-zinc-500">ID resolving, please search again...</span>
                       )}
