@@ -25,8 +25,6 @@ const TypingIndicator = () => (
 );
 
 const MessageBubble = ({ message, isBot, sources }: { message: string, isBot: boolean, sources?: SourceInfo[] }) => {
-  const [expandedSource, setExpandedSource] = useState<number | null>(null);
-
   return (
     <motion.div 
       initial={{ opacity: 0, y: 10 }}
@@ -48,53 +46,37 @@ const MessageBubble = ({ message, isBot, sources }: { message: string, isBot: bo
           </div>
 
           {sources && sources.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-1">
-              {sources.map((source, idx) => (
-                <div key={idx} className="relative">
-                  <button 
-                    onClick={() => setExpandedSource(expandedSource === idx ? null : idx)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 text-[11px] rounded-full border transition-all ${
-                      expandedSource === idx 
-                        ? 'bg-indigo-500/20 text-indigo-200 border-indigo-500/40' 
-                        : 'bg-white/5 text-zinc-400 border-white/10 hover:bg-white/10 hover:text-zinc-300'
-                    }`}
-                  >
-                    <FileText className="w-3 h-3" />
-                    <span className="max-w-[150px] truncate">{source.document_title}</span>
-                    {source.page_number && <span className="opacity-70">Pg {source.page_number}</span>}
-                  </button>
-                </div>
-              ))}
+            <div className="grid gap-2 mt-1">
+              {sources.map((source, i) => {
+                const snippet = encodeURIComponent(source.excerpt.substring(0, 50));
+                return (
+                  <div key={i} className={`p-3 rounded-lg border text-sm ${
+                    !isBot 
+                      ? 'bg-indigo-500/10 border-indigo-500/20 text-indigo-100'
+                      : 'bg-white/5 border-white/10 text-zinc-300'
+                  }`}>
+                    <div className="flex items-center gap-2 mb-1">
+                      <FileText className="w-3 h-3 text-indigo-400" />
+                      <span className="font-medium text-white">{source.document_title}</span>
+                      {source.page_number && (
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300">
+                          Page {source.page_number}
+                        </span>
+                      )}
+                    </div>
+                    <p className="opacity-80 italic line-clamp-2">"{source.excerpt}"</p>
+                    
+                    <Link 
+                      href={`/documents/${source.document_id}?page=${source.page_number || 1}&search=${snippet}`}
+                      className="inline-flex items-center mt-2 text-xs font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
+                    >
+                      View in Document <ChevronRight className="w-3 h-3 ml-1" />
+                    </Link>
+                  </div>
+                );
+              })}
             </div>
           )}
-
-          {/* Expanded Source Details */}
-          <AnimatePresence>
-            {expandedSource !== null && sources && sources[expandedSource] && (
-              <motion.div 
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="overflow-hidden"
-              >
-                <div className="mt-2 p-4 rounded-xl bg-black/40 border border-white/10 text-sm text-zinc-300 relative">
-                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-indigo-500 rounded-l-xl"></div>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="font-semibold text-white text-xs uppercase tracking-wider opacity-60">Source Excerpt</span>
-                    {sources[expandedSource].document_id && (
-                      <Link 
-                        href={`/documents/${sources[expandedSource].document_id}?page=${sources[expandedSource].page_number || 1}`}
-                        className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition-colors bg-indigo-500/10 hover:bg-indigo-500/20 px-2 py-1 rounded-md"
-                      >
-                        View in PDF <ExternalLink className="w-3 h-3" />
-                      </Link>
-                    )}
-                  </div>
-                  <p className="italic leading-relaxed">"{sources[expandedSource].excerpt}"</p>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
       </div>
     </motion.div>

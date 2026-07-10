@@ -87,7 +87,8 @@ export default function SearchPage() {
             </div>
           ) : (
             results.map((item, index) => {
-              const href = item.document_id ? `/documents/${item.document_id}?page=${item.page_number || 1}` : '#';
+              const snippet = encodeURIComponent(item.content.substring(0, 50));
+              const href = item.document_id ? `/documents/${item.document_id}?page=${item.page_number || 1}&search=${snippet}` : '#';
               const cardContent = (
                 <Card className={`glass-card bg-white/5 border-white/10 transition-all duration-300 group ${item.document_id ? 'hover:border-indigo-500/30 cursor-pointer' : 'opacity-80'}`}>
                   <CardContent className="p-6">

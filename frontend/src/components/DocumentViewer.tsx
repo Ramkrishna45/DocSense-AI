@@ -13,9 +13,10 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/b
 interface DocumentViewerProps {
   pdfUrl: string;
   initialPage?: number;
+  searchText?: string;
 }
 
-export default function DocumentViewer({ pdfUrl, initialPage = 1 }: DocumentViewerProps) {
+export default function DocumentViewer({ pdfUrl, initialPage = 1, searchText = '' }: DocumentViewerProps) {
   const [numPages, setNumPages] = useState<number | null>(null);
   const [pageNumber, setPageNumber] = useState<number>(initialPage);
   const [scale, setScale] = useState<number>(1.0);
@@ -44,6 +45,23 @@ export default function DocumentViewer({ pdfUrl, initialPage = 1 }: DocumentView
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
     setNumPages(numPages);
   }
+
+  const textRenderer = React.useCallback(
+    ({ str }: { str: string }) => {
+      if (!searchText) return str;
+      const words = searchText.match(/\b\w{5,}\b/g) || [];
+      if (words.length === 0) return str;
+      
+      const pattern = new RegExp(`(${words.join('|')})`, 'gi');
+      const split = str.split(pattern);
+      if (split.length <= 1) return str;
+      
+      return split.map((part, index) => 
+        index % 2 === 1 ? <mark key={index} className="bg-yellow-400/50 text-transparent rounded px-0.5" title="Highlighted match">{part}</mark> : part
+      );
+    },
+    [searchText]
+  );
 
   const changePage = (offset: number) => {
     setPageNumber(prevPageNumber => {
@@ -115,7 +133,7 @@ export default function DocumentViewer({ pdfUrl, initialPage = 1 }: DocumentView
         </div>
       </div>
 
-      <div className="flex-1 overflow-auto bg-zinc-950 flex justify-center p-4 custom-scrollbar items-start">
+      <div className="flex-1 overflow-auto bg-zinc-950 p-4 custom-scrollbar text-center relative">
         <Document
           file={pdfUrl}
           onLoadSuccess={onDocumentLoadSuccess}
@@ -130,9 +148,9 @@ export default function DocumentViewer({ pdfUrl, initialPage = 1 }: DocumentView
               <p>Failed to load PDF.</p>
             </div>
           }
-          className="flex flex-col items-center"
+          className="inline-block text-left"
         >
-          <div className="bg-white rounded shadow-xl overflow-hidden transition-transform">
+          <div className="bg-white rounded shadow-xl overflow-hidden transition-transform mx-auto w-fit">
             <Page 
               pageNumber={pageNumber} 
               scale={scale} 
@@ -143,6 +161,7 @@ export default function DocumentViewer({ pdfUrl, initialPage = 1 }: DocumentView
               }
               renderTextLayer={true}
               renderAnnotationLayer={true}
+              customTextRenderer={textRenderer}
             />
           </div>
         </Document>

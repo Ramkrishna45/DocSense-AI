@@ -246,7 +246,11 @@ export default function DocumentDetailPage() {
           </TabsContent>
           <TabsContent value="viewer" className="mt-0 h-[85vh] focus-visible:outline-none focus-visible:ring-0">
             {pdfUrl ? (
-              <DocumentViewer pdfUrl={pdfUrl} initialPage={pageParam ? parseInt(pageParam) : 1} />
+              <DocumentViewer 
+                pdfUrl={pdfUrl} 
+                initialPage={pageParam ? parseInt(pageParam) : 1} 
+                searchText={searchParams.get('search') || ''}
+              />
             ) : (
               <div className="w-full h-full flex flex-col items-center justify-center gap-4 bg-zinc-900 rounded-xl border border-white/10">
                 <Loader2 className="w-10 h-10 animate-spin text-indigo-500" />
