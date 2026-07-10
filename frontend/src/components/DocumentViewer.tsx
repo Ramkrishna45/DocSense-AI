@@ -165,7 +165,6 @@ export default function DocumentViewer({ pdfUrl, initialPage = 1, searchText = '
               }
               renderTextLayer={true}
               renderAnnotationLayer={true}
-              {/* @ts-expect-error react-pdf typing for customTextRenderer is incomplete in some versions */}
               customTextRenderer={textRenderer as any}
             />
           </div>
