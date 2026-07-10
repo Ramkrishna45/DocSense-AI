@@ -32,10 +32,10 @@ export default function Navbar() {
     <header className="sticky top-0 z-40 w-full glass border-b border-border/50 h-16 flex items-center px-4 md:px-6 justify-between">
       <div className="flex items-center flex-1">
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
-          <SheetTrigger asChild>
-            <button className="md:hidden mr-4 p-2 text-muted-foreground hover:text-foreground">
-              <Menu className="w-5 h-5" />
-            </button>
+          <SheetTrigger 
+            render={<button className="md:hidden mr-4 p-2 text-muted-foreground hover:text-foreground" />}
+          >
+            <Menu className="w-5 h-5" />
           </SheetTrigger>
           <SheetContent side="left" className="w-72 bg-zinc-950 border-border/50 p-0">
             <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
