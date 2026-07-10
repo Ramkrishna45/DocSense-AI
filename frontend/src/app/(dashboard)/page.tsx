@@ -116,20 +116,20 @@ export default function DashboardPage() {
                 </div>
               ) : (
                 documents.map((doc) => (
-                  <div key={doc.id} className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors group cursor-pointer">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-lg bg-indigo-500/20 flex items-center justify-center">
+                  <div key={doc.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 gap-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors group cursor-pointer">
+                    <div className="flex items-center gap-4 min-w-0">
+                      <div className="w-10 h-10 shrink-0 rounded-lg bg-indigo-500/20 flex items-center justify-center">
                         <FileText className="w-5 h-5 text-indigo-400" />
                       </div>
-                      <div>
-                        <h4 className="font-medium text-white group-hover:text-indigo-300 transition-colors">{doc.title}</h4>
-                        <div className="flex items-center gap-3 text-sm text-zinc-500">
-                          <span className="flex items-center gap-1"><Database className="w-3 h-3" /> {(doc.size / (1024 * 1024)).toFixed(2)} MB</span>
-                          <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {new Date(doc.created_at).toLocaleDateString()}</span>
+                      <div className="min-w-0">
+                        <h4 className="font-medium text-white group-hover:text-indigo-300 transition-colors truncate">{doc.title}</h4>
+                        <div className="flex flex-wrap items-center gap-3 text-sm text-zinc-500 mt-1">
+                          <span className="flex items-center gap-1 whitespace-nowrap"><Database className="w-3 h-3" /> {(doc.size / (1024 * 1024)).toFixed(2)} MB</span>
+                          <span className="flex items-center gap-1 whitespace-nowrap"><Clock className="w-3 h-3" /> {new Date(doc.created_at).toLocaleDateString()}</span>
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-end gap-3 shrink-0">
                       <span className={`px-3 py-1 rounded-full text-xs font-medium border ${
                         doc.status === 'completed' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/20' :
                         doc.status === 'failed' ? 'bg-red-500/20 text-red-400 border-red-500/20' :
